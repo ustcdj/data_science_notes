@@ -21,6 +21,7 @@ Often blended techniques of all three types are used in practice to provide the 
     - [3.2. The original Singular Value Decomposition (SVD)](#32-the-original-singular-value-decomposition-svd)
     - [3.3. FunkSVD](#33-funksvd)
     - [3.4. The Cold Start Problem](#34-the-cold-start-problem)
+    - [3.5. Explicit vs. implicit ratings](#35-explicit-vs-implicit-ratings)
   - [4. Content Based Recommendation](#4-content-based-recommendation)
   - [5. Applications](#5-applications)
     - [5.1. Example recommendation applications](#51-example-recommendation-applications)
@@ -169,7 +170,7 @@ Note: It is important to have all data be in the same scale. E.g., if some measu
 
 - **SVD algorithm**
 
-    If we let A A be our user-item matrix, we can write the decomposition of that matrix in the following way.
+    If we let A be our user-item matrix, we can write the decomposition of that matrix in the following way.
 
     <a href="https://www.codecogs.com/eqnedit.php?latex=$A&space;=&space;U&space;\Sigma&space;V^T$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$A&space;=&space;U&space;\Sigma&space;V^T$" title="$A = U \Sigma V^T$" /></a>
 
@@ -209,6 +210,12 @@ Note: It is important to have all data be in the same scale. E.g., if some measu
 The cold start problem is the problem that new users and new items to a platform don't have any ratings. Because these users and items don't have any ratings, it is impossible to use collaborative filtering methods to make recommendations.
 
 Therefore, other methods such as rank-based and content-based recommenders are the only way to get started with making recommendations for these individuals.
+
+### 3.5. Explicit vs. implicit ratings
+
+<img src="Resources/recommender/explicit_vs_implicit_ratings.png" width=500>
+
+When evaluating implicit ratings, use rank measure instead of RMSE.
 
 ## 4. Content Based Recommendation
 

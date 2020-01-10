@@ -3,16 +3,16 @@
 <!-- TOC -->
 
 - [Natural language processing (NLP)](#natural-language-processing-nlp)
-    - [1. Text Processing](#1-text-processing)
-        - [1.1. Text cleaning](#11-text-cleaning)
-        - [1.2. Normalization, tokenization, and stop words removal](#12-normalization-tokenization-and-stop-words-removal)
-        - [1.3. Part of speech tagging, named entity recognition, and conference resolution](#13-part-of-speech-tagging-named-entity-recognition-and-conference-resolution)
-        - [1.4. Stemming and Lemmatization](#14-stemming-and-lemmatization)
-    - [2. Feature Extraction](#2-feature-extraction)
-        - [2.1. Bag of Words](#21-bag-of-words)
-        - [2.2. TF-IDF](#22-tf-idf)
-        - [2.3. Word Embeddings](#23-word-embeddings)
-    - [3. Modeling](#3-modeling)
+  - [1. Text Processing](#1-text-processing)
+    - [1.1. Text cleaning](#11-text-cleaning)
+    - [1.2. Normalization, tokenization, and stop words removal](#12-normalization-tokenization-and-stop-words-removal)
+    - [1.3. Part of speech tagging, named entity recognition, and conference resolution](#13-part-of-speech-tagging-named-entity-recognition-and-conference-resolution)
+    - [1.4. Stemming and Lemmatization](#14-stemming-and-lemmatization)
+  - [2. Feature Extraction](#2-feature-extraction)
+    - [2.1. Bag of Words](#21-bag-of-words)
+    - [2.2. TF-IDF](#22-tf-idf)
+    - [2.3. Word Embeddings](#23-word-embeddings)
+  - [3. Modeling](#3-modeling)
 
 <!-- /TOC -->
 
@@ -64,7 +64,7 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     response = requests.get("https://www.udacity.com/courses/all")
 
     # Use BeautifulSoup to remove HTML tags
-    soup = BeautifulSoup(r.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'lxml')
 
     # Find all course summaries
     summaries = soup.find_all('div', class_="course-summary-card")
@@ -109,7 +109,7 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     ```
 
     ```python
-    # Spacey
+    # Spacy
     !{sys.executable} -m pip install spacy
     !{sys.executable} -m pip install https://github.com/huggingface/neuralcoref-models/releases/download/en_coref_md-3.0.0/en_coref_md-3.0.0.tar.gz
     import spacy
@@ -138,7 +138,7 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     ```
 
     ```python
-    # Spacey
+    # Spacy
     import spacy
 
     # Load the trained model of the English language
@@ -166,7 +166,7 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     Outputs [('I', 'PRP'), ('always', 'RB'), ...]
 
     ```python
-    # Spacey
+    # Spacy
     # Keep only nouns and verbs
     noun_verbs = [token.text for token in stoplisted if token.pos_ == "NOUN" or token.pos_ == "VERB"]
     ```
@@ -190,7 +190,7 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     Identify the original reference of pronouns (she, he, it, that, her, him, etc).
 
     ```python
-    # Spacey
+    # Spacy
     import spacy
 
     # Load the trained model of the English language
@@ -226,8 +226,8 @@ Take raw input text, clean it, normalize it, and convert it into a form that is 
     ```
 
     ```python
-    # Spacey
-    import spacey
+    # Spacy
+    import spacy
 
     # Load the trained model of the English language
     nlp = spacy.load('en_coref_md')
@@ -253,7 +253,7 @@ Feature extraction depends on the goal
 
 - **Bag of words**
 
-    Document-term matrixs<br>
+    Document-term matrix<br>
     <img src="resources/nlp_bow_eg0.png" width=500>
 
     To compare similarity between 2 documents
@@ -336,7 +336,7 @@ Term Frequency – Inverse Document Frequency (TF-IDF) is a measure intended to
 
 - **TF (Term Frequency)**
   
-    - Commonly used definition: The count of the term in a document *d*, divided by the total number of terms *t* in the document
+    - Commonly used definition: The count of the term *t* in a document *d*, divided by the total number of terms in the document
         
         <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{count(t,&space;d)}{|d|}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{count(t,&space;d)}{|d|}" title="\frac{count(t, d)}{|d|}" /></a>
 
@@ -436,7 +436,7 @@ To control the size of the word representation, find an embedding for each word 
 
     <img src="resources/embedding_deep_learning.png" width=300>
 
-- **t-SNE for visualing word embedding**
+- **t-SNE for visualizing word embedding**
 
     t-distributed stochastic neighbor embedding (t-SNE) is a dimensionality reduction technique to map higher dimensional vectors into lower dimensional space, while maintaining relative distances between objects.s
 

@@ -3,297 +3,908 @@
 <!-- TOC -->
 
 - [Deep Learning](#deep-learning)
-  - [1. Intro to Neural Networks](#1-intro-to-neural-networks)
-    - [1.1. Decision boundary](#11-decision-boundary)
-    - [1.2. Perceptron](#12-perceptron)
-    - [1.3. Perceptron trick](#13-perceptron-trick)
-    - [1.4. Activation function](#14-activation-function)
-    - [1.5. Log-loss error function](#15-log-loss-error-function)
-    - [1.6. Minimize the error function via gradient descent](#16-minimize-the-error-function-via-gradient-descent)
-    - [1.7. Neural network architechture](#17-neural-network-architechture)
-    - [1.8. Mean squared error function](#18-mean-squared-error-function)
-    - [1.9. Some useful terminology](#19-some-useful-terminology)
-  - [2. Training neural networks](#2-training-neural-networks)
-    - [2.1. Resolve overfitting](#21-resolve-overfitting)
-    - [2.2. Resolve local minimum](#22-resolve-local-minimum)
-    - [2.3. Resolve too small gradient from sigmoid](#23-resolve-too-small-gradient-from-sigmoid)
-    - [2.4. Resolve humongous dataset](#24-resolve-humongous-dataset)
-  - [3. Building a neural network with keras](#3-building-a-neural-network-with-keras)
-    - [3.1. Optimizers in Keras](#31-optimizers-in-keras)
-    - [3.2. Keras script](#32-keras-script)
-  - [4. Deep learning with PyTorch](#4-deep-learning-with-pytorch)
-    - [4.1. Pytorch syntax](#41-pytorch-syntax)
-    - [4.2. Initialize data](#42-initialize-data)
-    - [4.3. Define layers and operations](#43-define-layers-and-operations)
-    - [4.4. Define criterion, optimizer, and validation](#44-define-criterion-optimizer-and-validation)
-    - [4.5. Train a neural network](#45-train-a-neural-network)
-    - [4.6. Inference](#46-inference)
-    - [4.7. Save and load trained networks](#47-save-and-load-trained-networks)
-    - [4.8. Transfer learning with CUDA](#48-transfer-learning-with-cuda)
+  - [1. Deep learning and neural network basics](#1-deep-learning-and-neural-network-basics)
+    - [1.1. Intro to deep learning](#11-intro-to-deep-learning)
+    - [1.2. Perceptron of neural networks](#12-perceptron-of-neural-networks)
+    - [1.3. Activation function of neural networks](#13-activation-function-of-neural-networks)
+    - [1.4. Log-loss error function](#14-log-loss-error-function)
+    - [1.5. Gradient of the error function](#15-gradient-of-the-error-function)
+    - [1.6. Gradient descent for neural networks](#16-gradient-descent-for-neural-networks)
+    - [1.7. Some useful terminology](#17-some-useful-terminology)
+  - [2. Improving deep neural networks](#2-improving-deep-neural-networks)
+    - [2.1. Setting up deep neural network applications](#21-setting-up-deep-neural-network-applications)
+    - [2.2. Reduce overfitting](#22-reduce-overfitting)
+    - [2.3. Setting up optimization problem](#23-setting-up-optimization-problem)
+    - [2.4. Optimization algorithms](#24-optimization-algorithms)
+    - [2.5. Hyperparameter tuning](#25-hyperparameter-tuning)
+    - [2.6. Batch normalization](#26-batch-normalization)
+    - [2.7. Deep learning frameworks](#27-deep-learning-frameworks)
+  - [3. Structuring machine learning projects](#3-structuring-machine-learning-projects)
+    - [3.1. Orthogonalization](#31-orthogonalization)
+    - [3.2. Setting up your goal](#32-setting-up-your-goal)
+    - [3.3. Comparing to human-level performance for bias/variance analysis](#33-comparing-to-human-level-performance-for-biasvariance-analysis)
+    - [3.4. Error analysis](#34-error-analysis)
+    - [3.5. Mismatched training and dev/test sets](#35-mismatched-training-and-devtest-sets)
+    - [3.6. Learning from multiple tasks](#36-learning-from-multiple-tasks)
+    - [3.7. End-to-end deep learning](#37-end-to-end-deep-learning)
+  - [4. Building a neural network with keras](#4-building-a-neural-network-with-keras)
+    - [4.1. Optimizers in Keras](#41-optimizers-in-keras)
+    - [4.2. Models in Keras](#42-models-in-keras)
+    - [4.3. Keras code example with sequential model](#43-keras-code-example-with-sequential-model)
+    - [4.4. Keras code example with functional model](#44-keras-code-example-with-functional-model)
+  - [5. Deep learning with PyTorch](#5-deep-learning-with-pytorch)
+    - [5.1. Pytorch syntax](#51-pytorch-syntax)
+    - [5.2. Initialize data](#52-initialize-data)
+    - [5.3. Define layers and operations](#53-define-layers-and-operations)
+    - [5.4. Define criterion, optimizer, and validation](#54-define-criterion-optimizer-and-validation)
+    - [5.5. Train a neural network](#55-train-a-neural-network)
+    - [5.6. Inference](#56-inference)
+    - [5.7. Save and load trained networks](#57-save-and-load-trained-networks)
+    - [5.8. Transfer learning with CUDA](#58-transfer-learning-with-cuda)
 
 <!-- /TOC -->
 
-## 1. Intro to Neural Networks
+## 1. Deep learning and neural network basics
 
-Classification problem
+### 1.1. Intro to deep learning
 
-### 1.1. Decision boundary
+- Examples of neural network application:
 
-- Linear equation
+  - real estate (standard NN)
+  - online advertising (standard NN)
+  - photo tagging (CNN)
+  - speech recognition (RNN)
+  - machine translation (RNN)
+  - autonomous driving (hybrid NN)
 
-  WX + b = 0
+  <img src="Resources/deep_learning/nn_examples.png" width="600">
 
-- Notation
+  <img src="Resources/deep_learning/nn_examples_dtype.png" width="600">
 
-  W: weight <br>
-  X: input features <br>
-  b: bias <br>
-  y: label 0 or 1 <br>
-  $\alpha$: learning rate <br>
+- Scale drives deep learning progress
 
-### 1.2. Perceptron
+  - More data
+  - Faster computation
+  - New and more efficient algorithms
 
-<img src="Resources/perceptron.png" alt="perceptron" width="550">
+  <img src="Resources/deep_learning/nn_taking_off_anno.png" width="600">
 
-<img src="Resources/perceptron_and_or.png" alt="perceptron_and_or" width="550">
+- Applied deep learning is a highly iterative and very empirical process
 
-### 1.3. Perceptron trick
+  <img src="Resources/deep_learning/deep_learning_empirical.png" width="300">
 
-$w_1x_1 + w_2x_2 + b = 0$ <br>
-Point (xp, xq) classified incorrecctly <br>
+### 1.2. Perceptron of neural networks
 
-To move the decision boundary closer to the point, for every misclassified point:
+- Decision boundary
 
-- if the incorrect prediction = 1
-  
-  $w_1 := w_1 - x_p\alpha$ <br>
-  $w_2 := w_2 - x_q\alpha$ <br>
-  $b := b - \alpha$ <br>
+  - Linear equation
 
-- if the incorrect prediction = 0
-  
-  $w_1 := w_1 + x_p\alpha$ <br>
-  $w_2 := w_2 + x_q\alpha$ <br>
-  $b := b + \alpha$ <br>
+    WX + b = 0
 
-### 1.4. Activation function
+  - Notation
+
+    W: weight <br>
+    X: input features <br>
+    b: bias <br>
+    y: label 0 or 1 <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /></a>: learning rate
+
+- Perceptron
+
+  <img src="Resources/perceptron.png" alt="perceptron" width="550">
+
+  <img src="Resources/perceptron_and_or.png" alt="perceptron_and_or" width="550">
+
+- Perceptron trick
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=w_1x_1&space;&plus;&space;w_2x_2&space;&plus;&space;b&space;=&space;0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_1x_1&space;&plus;&space;w_2x_2&space;&plus;&space;b&space;=&space;0" title="w_1x_1 + w_2x_2 + b = 0" /></a> <br>
+  Point <a href="https://www.codecogs.com/eqnedit.php?latex=(x_p,&space;x_q)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?(x_p,&space;x_q)" title="(x_p, x_q)" /></a> classified incorrecctly
+
+  To move the decision boundary closer to the point, for every misclassified point:
+
+  - if the incorrect prediction = 1
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=w_1&space;:=&space;w_1&space;-&space;x_p\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_1&space;:=&space;w_1&space;-&space;x_p\alpha" title="w_1 := w_1 - x_p\alpha" /></a> <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=w_2&space;:=&space;w_2&space;-&space;x_q\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_2&space;:=&space;w_2&space;-&space;x_q\alpha" title="w_2 := w_2 - x_q\alpha" /></a> <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=b&space;:=&space;b&space;-&space;\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?b&space;:=&space;b&space;-&space;\alpha" title="b := b - \alpha" /></a> <br>
+
+  - if the incorrect prediction = 0
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=w_1&space;:=&space;w_1&space;&plus;&space;x_p\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_1&space;:=&space;w_1&space;&plus;&space;x_p\alpha" title="w_1 := w_1 + x_p\alpha" /></a> <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=w_2&space;:=&space;w_2&space;&plus;&space;x_q\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_2&space;:=&space;w_2&space;&plus;&space;x_q\alpha" title="w_2 := w_2 + x_q\alpha" /></a> <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=b&space;:=&space;b&space;&plus;&space;\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?b&space;:=&space;b&space;&plus;&space;\alpha" title="b := b + \alpha" /></a> <br>
+
+- Neural network architechture (Multi-Layer Perceptrons)
+
+  <img src="Resources/deep_learning/neural_networks.png" alt="neural_networks" width="500">
+
+  <img src="Resources/deep_learning/neural_networks_bi.png" alt="neural_networks_bi" width="500">
+
+  <img src="Resources/deep_learning/neural_networks_mult.png" alt="neural_networks_mult" width="500">
+
+### 1.3. Activation function of neural networks
 
 - Sigmoid function (2 classes)
 
-  $h_\theta(x)=\frac{1}{1+e^{-\theta^Tx}}$
+  <a href="https://www.codecogs.com/eqnedit.php?latex=h_\theta(x)=\frac{1}{1&plus;e^{-\theta^Tx}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h_\theta(x)=\frac{1}{1&plus;e^{-\theta^Tx}}" title="h_\theta(x)=\frac{1}{1+e^{-\theta^Tx}}" /></a>, denote <a href="https://www.codecogs.com/eqnedit.php?latex=a&space;=&space;h_\theta(x)&space;=&space;g(z)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?a&space;=&space;h_\theta(x)&space;=&space;g(z)" title="a = h_\theta(x) = g(z)" /></a> where <a href="https://www.codecogs.com/eqnedit.php?latex=z=\theta^Tx" target="_blank"><img src="https://latex.codecogs.com/gif.latex?z=\theta^Tx" title="z=\theta^Tx" /></a>
+
+  - (-) Often not used, except for the output layer of binary classification
+  - (-) Gradient becomes very small when z is either very large or very small
 
 - Softmax function (≥3 classes)
 
-  $h^i_\theta(x)=\frac{e^{Zi}}{e^{Z1}+...+e^{Zn}}$ for class i = 1,...,n
+  <a href="https://www.codecogs.com/eqnedit.php?latex=h^i_\theta(x)=\frac{e^{Zi}}{e^{Z1}&plus;...&plus;e^{Zn}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h^i_\theta(x)=\frac{e^{Zi}}{e^{Z1}&plus;...&plus;e^{Zn}}" title="h^i_\theta(x)=\frac{e^{Zi}}{e^{Z1}+...+e^{Zn}}" /></a> for class i = 1,...,n
 
-### 1.5. Log-loss error function
+- Hyperbolic tangent function
 
-- Maximum likelihood
+  <a href="https://www.codecogs.com/eqnedit.php?latex=h_\theta(x)&space;=&space;tanh(z)&space;=&space;\frac{e^z&space;-&space;e^{-z}}{e^z&space;&plus;&space;e^{-z}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h_\theta(x)&space;=&space;tanh(z)&space;=&space;\frac{e^z&space;-&space;e^{-z}}{e^z&space;&plus;&space;e^{-z}}" title="h_\theta(x) = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}" /></a>
+  
+  <img src="Resources/deep_learning/activation_tanh.png" alt="activation_tanh" width=400>
 
-  $\prod$ of all events under the current model
+  - (+) Often superior to sigmoid function
+  - (+) Centralizes data to have zero mean
+  - (-) Gradient becomes very small when z is either very large or very small
+
+- Rectified linear unit (ReLU)
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=h_\theta(x)&space;=&space;max(0,&space;z)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h_\theta(x)&space;=&space;max(0,&space;z)" title="h_\theta(x) = max(0, z)" /></a>
+
+  <img src="Resources/deep_learning/activation_relu.png" alt="activation_relu" width=400>
+
+  - (+) Most commonly used
+  - (+) Learns faster due to larger gradient when z is either very large or very small
+  - (-) "Dying ReLU" always outputs 0
+
+- Leaky ReLU
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=h_\theta(x)&space;=&space;max(0.01&space;z,&space;z)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h_\theta(x)&space;=&space;max(0.01&space;z,&space;z)" title="h_\theta(x) = max(0.01z, z)" /></a>
+
+  - (+) Resolves dying ReLU problem
+
+- Comparison of activation functions
+
+  [ReLU vs. sigmoid from stackexchange](https://stats.stackexchange.com/questions/126238/what-are-the-advantages-of-relu-over-sigmoid-function-in-deep-neural-networks) <br>
+  [Activation function comparison from medium](https://medium.com/@shrutijadon10104776/survey-on-activation-functions-for-deep-learning-9689331ba092)
+
+### 1.4. Log-loss error function
+
+- Mean squared error of sigmoid function is not convex
+
+  - Cost function
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=E=\frac{1}{2}\sum_i(y_{i}-f(\theta&space;x_{i}))^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?E=\frac{1}{2}\sum_i(y_{i}-f(\theta&space;x_{i}))^2" title="E=\frac{1}{2}\sum_i(y_{i}-f(\theta x_{i}))^2" /></a>
+
+  - Gradient
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial}{\partial&space;\theta_j}E=-(y_{i}-f(\theta&space;x_{i}))\frac{\partial&space;f(\theta&space;x_{i})}{\partial&space;(\theta&space;x_{i})}x_i" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial}{\partial&space;\theta_j}E=-(y_{i}-f(\theta&space;x_{i}))\frac{\partial&space;f(\theta&space;x_{i})}{\partial&space;(\theta&space;x_{i})}x_i" title="\frac{\partial}{\partial \theta_j}E=-(y_{i}-f(\theta x_{i}))\frac{\partial f(\theta x_{i})}{\partial (\theta x_{i})}x_i" /></a>
+
+- Maximum likelihood estimation
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\prod" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\prod" title="\prod" /></a> of all events's probabilities under the current model <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=m" target="_blank"><img src="https://latex.codecogs.com/gif.latex?m" title="m" /></a>: number of observations <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=n" target="_blank"><img src="https://latex.codecogs.com/gif.latex?n" title="n" /></a>: number of classes <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=p_i" target="_blank"><img src="https://latex.codecogs.com/gif.latex?p_i" title="p_i" /></a>: probability of the event happening under the current model
+  
+  - Binary
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=likelihood=\prod_{i=1}^{m}p_i^{y_i}(1-p_i)^{(1-y_i)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?likelihood=\prod_{i=1}^{m}p_i^{y_i}(1-p_i)^{(1-y_i)}" title="likelihood=\prod_{i=1}^{m}p_i^{y_i}(1-p_i)^{(1-y_i)}" /></a>
+
+  - Multi-class
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=likelihood=\prod_{i=1}^{m}\prod_{j=1}^{n}p_{ij}^{y_{ij}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?likelihood=\prod_{i=1}^{m}\prod_{j=1}^{n}p_{ij}^{y_{ij}}" title="likelihood=\prod_{i=1}^{m}\prod_{j=1}^{n}p_{ij}^{y_{ij}}" /></a>
 
 - Cross entropy
 
   - Binary
 
-    $cross\_entropy = -\sum_{i=1}^m{y_iln(p_i)+(1-y_i)ln(1-p_i)}$, aka., -ln(maximum likelihood) <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=cross\_entropy&space;=&space;-\sum_{i=1}^m[{y_ilog(p_i)&plus;(1-y_i)log(1-p_i)}]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cross\_entropy&space;=&space;-\sum_{i=1}^m[{y_ilog(p_i)&plus;(1-y_i)log(1-p_i)}]" title="cross\_entropy = -\sum_{i=1}^m[{y_ilog(p_i)+(1-y_i)log(1-p_i)}]" /></a>, aka., -log(likelihood)
 
-    $m$: number of classes <br>
-    $p_i$: probability of the event happening under the current model <br>
-    
     Lower entropy means better model <br>
     Goal: minimize the cross entropy
 
   - Multi-class
 
-    $cross\_entropy = -\sum_{i=1}^n\sum_{j=1}^m{y_{ij}ln(p_{ij})}$
+    <a href="https://www.codecogs.com/eqnedit.php?latex=cross\_entropy&space;=&space;-\sum_{i=1}^m\sum_{j=1}^n{y_{ij}log(p_{ij})}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cross\_entropy&space;=&space;-\sum_{i=1}^m\sum_{j=1}^n{y_{ij}log(p_{ij})}" title="cross\_entropy = -\sum_{i=1}^m\sum_{j=1}^n{y_{ij}log(p_{ij})}" /></a>
 
 - Error function of logistic regression
 
   - Binary
 
-    $J(\Theta)=-\frac{1}{m}\sum_{i=1}^m[y_{( i)}log(h_\Theta(x_{(i)}))+(1-y_{(i)})log(1-h_\Theta(x_{(i)})]$
+    <a href="https://www.codecogs.com/eqnedit.php?latex=J(\Theta)=-\frac{1}{m}\sum_{i=1}^m[y_{(&space;i)}log(h_\Theta(x_{(i)}))&plus;(1-y_{(i)})log(1-h_\Theta(x_{(i)})]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J(\Theta)=-\frac{1}{m}\sum_{i=1}^m[y_{(&space;i)}log(h_\Theta(x_{(i)}))&plus;(1-y_{(i)})log(1-h_\Theta(x_{(i)})]" title="J(\Theta)=-\frac{1}{m}\sum_{i=1}^m[y_{( i)}log(h_\Theta(x_{(i)}))+(1-y_{(i)})log(1-h_\Theta(x_{(i)})]" /></a>
 
   - Multi-class
 
-    $J(\Theta)=-\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^ny_{(ij)}log(h_\Theta(x_{(ij)}))$
+    <a href="https://www.codecogs.com/eqnedit.php?latex=J(\Theta)=-\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^ny_{(ij)}log(h_\Theta(x_{(ij)}))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J(\Theta)=-\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^ny_{(ij)}log(h_\Theta(x_{(ij)}))" title="J(\Theta)=-\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^ny_{(ij)}log(h_\Theta(x_{(ij)}))" /></a>
 
-### 1.6. Minimize the error function via gradient descent
+### 1.5. Gradient of the error function
+
+- Notation
+
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=a_i^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?a_i^{(l)}" title="a_i^{(l)}" /></a>: "activation" of unit i in layer l where <a href="https://www.codecogs.com/eqnedit.php?latex=l&space;\in&space;[1,&space;L]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?l&space;\in&space;[1,&space;L]" title="l \in [1, L]" /></a>
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\Theta^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Theta^{(l)}" title="\Theta^{(l)}" /></a>: matrix of weights controlling function mapping from layer l to layer l + 1, where <a href="https://www.codecogs.com/eqnedit.php?latex=\theta_{ij}^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta_{ij}^{(l)}" title="\theta_{ij}^{(l)}" /></a> relates unit j in layer l to unit i in layer l+1
+  - If network has <a href="https://www.codecogs.com/eqnedit.php?latex=s_l" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_l" title="s_l" /></a> units in layer j and <a href="https://www.codecogs.com/eqnedit.php?latex=s_{l&plus;1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_{l&plus;1}" title="s_{l+1}" /></a> units in layer l+1, then <a href="https://www.codecogs.com/eqnedit.php?latex=\Theta^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Theta^{(l)}" title="\Theta^{(l)}" /></a> will be of dimension <a href="https://www.codecogs.com/eqnedit.php?latex=s_{l&plus;1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_{l&plus;1}" title="s_{l+1}" /></a> × <a href="https://www.codecogs.com/eqnedit.php?latex=(s_l&plus;1)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?(s_l&plus;1)" title="(s_l+1)" /></a>
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\delta_j^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta_j^{(l)}" title="\delta_j^{(l)}" /></a>: error of node j in layer l
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /></a>: learning rate
+
+- Forward propogation to calculate output unit and error
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=z^{(l&plus;1)}=\Theta^{(l)}a^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?z^{(l&plus;1)}=\Theta^{(l)}a^{(l)}" title="z^{(l+1)}=\Theta^{(l)}a^{(l)}" /></a> <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=a^{(l&plus;1)}=g(z^{(l&plus;1)})=\frac{1}{1&plus;e^{-z^{(l&plus;1)}}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?a^{(l&plus;1)}=g(z^{(l&plus;1)})=\frac{1}{1&plus;e^{-z^{(l&plus;1)}}}" title="a^{(l+1)}=g(z^{(l+1)})=\frac{1}{1+e^{-z^{(l+1)}}}" /></a> for sigmoid function
+
+- Error function of each data point
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=E&space;=&space;{y}log(a^{(L)})&plus;(1-y)log(1-a^{(L)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?E&space;=&space;{y}log(a^{(L)})&plus;(1-y)log(1-a^{(L)})" title="E = {y}log(a^{(L)})+(1-y)log(1-a^{(L)})" /></a>
 
 - Gradient of the error function
 
-  $\delta_j^{(l)}$: error of node j in layer l <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\delta_j^{(l)}=\frac{\partial&space;E}{\partial&space;z}=\frac{\partial&space;E}{\partial&space;a}\frac{\partial&space;a}{\partial&space;z}=\frac{\partial&space;E}{\partial&space;a}g'(z)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta_j^{(l)}=\frac{\partial&space;E}{\partial&space;z}=\frac{\partial&space;E}{\partial&space;a}\frac{\partial&space;a}{\partial&space;z}=\frac{\partial&space;E}{\partial&space;a}g'(z)" title="\delta_j^{(l)}=\frac{\partial E}{\partial z}=\frac{\partial E}{\partial a}\frac{\partial a}{\partial z}=\frac{\partial E}{\partial a}g'(z)" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=g'(z^{(l)})=a^{(l)}(1-a^{(l)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?g'(z^{(l)})=a^{(l)}(1-a^{(l)})" title="g'(z^{(l)})=a^{(l)}(1-a^{(l)})" /></a> for sigmoid function
 
-  $l=L$ <br>
-  For each output unit j, <br> 
-  $\delta_j^{(L)}=a_j^{(L)}-y_j=h_\Theta(x)_j-y_j$ <br>
+  - When <a href="https://www.codecogs.com/eqnedit.php?latex=l=L" target="_blank"><img src="https://latex.codecogs.com/gif.latex?l=L" title="l=L" /></a>:
 
-  $1<l<L$ <br>
-  $\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l+1)}.*g'(z^{(l)})$ where $g'(z^{(l)})=a^{(l)}.*(1-a^{(l)})$ <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\delta_j^{(L)}=(-\frac{y}{a}&plus;\frac{1-y}{1-a})(a(1-a))=a_j^{(L)}-y_j" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta_j^{(L)}=(-\frac{y}{a}&plus;\frac{1-y}{1-a})(a(1-a))=a_j^{(L)}-y_j" title="\delta_j^{(L)}=(-\frac{y}{a}+\frac{1-y}{1-a})(a(1-a))=a_j^{(L)}-y_j" /></a> for sigmoid function <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\delta_j^{(L)}=a_j^{(L)}-y_j" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta_j^{(L)}=a_j^{(L)}-y_j" title="\delta_j^{(L)}=a_j^{(L)}-y_j" /></a> for softmax function
 
-  Gradient: <br>
-  $\frac{\partial}{\partial \Theta_{ij}^{(l)}}J(\Theta)=a_j^{(l)}\delta_i^{(l+1)}$ ignoring regularization
+  - When <a href="https://www.codecogs.com/eqnedit.php?latex=l<L" target="_blank"><img src="https://latex.codecogs.com/gif.latex?l<L" title="l<L" /></a>:
 
-- Gradient descent steps
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l&plus;1)}&space;*&space;g'(z^{(l)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l&plus;1)}&space;*&space;g'(z^{(l)})" title="\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l+1)} * g'(z^{(l)})" /></a>
 
-  Repeat until convergence {
-      $\theta_j:=\theta_j-\alpha\frac{\partial}{\partial \theta_j}J(\theta)$
-  }
+- Gradient with respect to the weights ignoring regularization
 
-  where $\alpha$ is learning rate; simultaneously update $\theta_0$ and $\theta_1$
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;E}{\partial&space;\theta_{ij}^{(l)}}=a_j^{(l)}\delta_i^{(l&plus;1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;E}{\partial&space;\theta_{ij}^{(l)}}=a_j^{(l)}\delta_i^{(l&plus;1)}" title="\frac{\partial E}{\partial \theta_{ij}^{(l)}}=a_j^{(l)}\delta_i^{(l+1)}" /></a>
 
-- Gradient descent algorithm
+### 1.6. Gradient descent for neural networks
 
-  <img src="Resources/deep_learning/gradient_descent.png" alt="gradient_descent" width="500">
+- Additional notation
 
-### 1.7. Neural network architechture
+  - m: the number of records, such that training set <a href="https://www.codecogs.com/eqnedit.php?latex={(x^{(1)},&space;y^{(1)}),&space;...,&space;(x^{(m)},&space;y^{(m)})}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{(x^{(1)},&space;y^{(1)}),&space;...,&space;(x^{(m)},&space;y^{(m)})}" title="{(x^{(1)}, y^{(1)}), ..., (x^{(m)}, y^{(m)})}" /></a>
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=g'(z^{(l)})=a^{(l)}(1-a^{(l)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?g'(z^{(l)})=a^{(l)}(1-a^{(l)})" title="g'(z^{(l)})=a^{(l)}(1-a^{(l)})" /></a> for sigmoid function
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}" title="\frac{\partial J}{\partial \theta_{ij}^{(l)}}" /></a>: error gradient with respect to <a href="https://www.codecogs.com/eqnedit.php?latex=\theta_{ij}^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta_{ij}^{(l)}" title="\theta_{ij}^{(l)}" /></a>, averaged across data points
 
-Neural Networks (Multi-Layer Perceptrons)
+- (i) Initialize parameters
+  
+  - Initialize weights (excluding intercepts) near 0 with different starting values. A good value for the scale is <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{1}{\sqrt{n}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{1}{\sqrt{n}}" title="\frac{1}{\sqrt{n}}" /></a> where n is the number of input units, or <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\sqrt{2}}{\sqrt{n}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\sqrt{2}}{\sqrt{n}}" title="\frac{\sqrt{2}}{\sqrt{n}}" /></a> for ReLU.
+  - Initialize bias units as 0
+  - Set <a href="https://www.codecogs.com/eqnedit.php?latex=\Delta_{ij}^{(l)}=0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Delta_{ij}^{(l)}=0" title="\Delta_{ij}^{(l)}=0" /></a> for all l, i, j
 
-<img src="Resources/deep_learning/neural_networks.png" alt="neural_networks" width="500">
+- (ii) Forward propogation
 
-<img src="Resources/deep_learning/neural_networks_bi.png" alt="neural_networks_bi" width="500">
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=z_i^{(l)}=\sum_j\theta_{ij}^{(l-1)}a_j^{(l-1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?z_i^{(l)}=\sum_j\theta_{ij}^{(l-1)}a_j^{(l-1)}" title="z_i^{(l)}=\sum_j\theta_{ij}^{(l-1)}a_j^{(l-1)}" /></a>
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=a_i^{(l)}=g^{(l)}(z_i^{(l)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?a_i^{(l)}=g^{(l)}(z_i^{(l)})" title="a_i^{(l)}=g^{(l)}(z_i^{(l)})" /></a>
 
-<img src="Resources/deep_learning/neural_networks_mult.png" alt="neural_networks_mult" width="500">
+- (iii) Error function
 
-- Feedforward
+  <a href="https://www.codecogs.com/eqnedit.php?latex=J=-\frac{1}{m}\sum_{i=1}^m[y_{i}log(a_i^{(L)})&plus;(1-y_{i})log(1-a_i^{(L)})]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J=-\frac{1}{m}\sum_{i=1}^m[y_{i}log(a_i^{(L)})&plus;(1-y_{i})log(1-a_i^{(L)})]" title="J=-\frac{1}{m}\sum_{i=1}^m[y_{i}log(a_i^{(L)})+(1-y_{i})log(1-a_i^{(L)})]" /></a>
 
-  $z^{(j+1)}=Θ^{(j)}a^{(j)}$ <br>
-  $a^{(j+1)}=g(z^{(j+1)})$
+- (iv) Backpropogation
 
-  - $a_i^{(j)}$: "activation" of unit i in layer j <br>
-  - $\Theta^{(j)}$: matrix of weights controlling function mapping from layer j to layer j + 1
-  - If network has $s_j$ units in layer j and $s_{j+1}$ units in layer j+1, then $Θ^{(j)}$ will be of dimension $s_{j+1}$ × ($s_j$+1).
+  - Calculate error term for output unit <br><a href="https://www.codecogs.com/eqnedit.php?latex=\delta^{(L)}=a^{(L)}-y" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta^{(L)}=a^{(L)}-y" title="\delta^{(L)}=a^{(L)}-y" /></a>, for sigmoid function in output unit
+  - Compute <a href="https://www.codecogs.com/eqnedit.php?latex=\delta^{(L-1)},&space;\delta^{(L-2)},&space;...,&space;\delta^{(1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta^{(L-1)},&space;\delta^{(L-2)},&space;...,&space;\delta^{(1)}" title="\delta^{(L-1)}, \delta^{(L-2)}, ..., \delta^{(1)}" /></a> <br> <a href="https://www.codecogs.com/eqnedit.php?latex=\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l&plus;1)}&space;*&space;g'(z^{(l)})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l&plus;1)}&space;*&space;g'(z^{(l)})" title="\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l+1)} * g'(z^{(l)})" /></a>
 
-- Error function
+- (v) Cumulative error
+  - Without regularization
 
-  $J(\Theta)=-\frac{1}{m}\sum_{i=1}^m[y_{i}log(h_\Theta(x_{i}))+(1-y_{i})log(1-h_\Theta(x_{i})]$
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\frac{\partial&space;E}{\partial&space;z}\frac{\partial&space;z}{\partial&space;\theta}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\frac{\partial&space;E}{\partial&space;z}\frac{\partial&space;z}{\partial&space;\theta}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}" title="\frac{\partial J}{\partial \theta_{ij}^{(l)}}=-\frac{1}{m}\frac{\partial E}{\partial z}\frac{\partial z}{\partial \theta}=-\frac{1}{m}\sum_{data\ points}a_j^{(l)}\delta_i^{(l+1)}" /></a>, i.e., <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\Theta^{(l)}}=-\frac{1}{m}\delta^{(l&plus;1)}(a^{(l)})^T" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\Theta^{(l)}}=-\frac{1}{m}\delta^{(l&plus;1)}(a^{(l)})^T" title="\frac{\partial J}{\partial \Theta^{(l)}}=-\frac{1}{m}\delta^{(l+1)}(a^{(l)})^T" /></a>
 
-- Backpropogation
+  - With regularization
 
-  - $\delta_j^{(l)}$: error of node j in layer l
-  - Algorithm
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}&plus;\lambda&space;\theta_{ij}^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}&plus;\lambda&space;\theta_{ij}^{(l)}" title="\frac{\partial J}{\partial \theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\ points}a_j^{(l)}\delta_i^{(l+1)}+\lambda \theta_{ij}^{(l)}" /></a> if j≠0. <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\&space;points}a_j^{(l)}\delta_i^{(l&plus;1)}" title="\frac{\partial J}{\partial \theta_{ij}^{(l)}}=-\frac{1}{m}\sum_{data\ points}a_j^{(l)}\delta_i^{(l+1)}" /></a> if j=0. By convention, regularization does not include bias units.
 
-    Training set ${(x^{(1)}, y^{(1)}), ..., (x^{(m)}, y^{(m)})}$ <br>
-    Set $\Delta_{ij}^{(l)}=0$ for all l, i, j <br>
+- (vi) Update parameters
+  
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\theta_{ij}^{(l)}:=\theta_{ij}^{(l)}-\alpha&space;\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta_{ij}^{(l)}:=\theta_{ij}^{(l)}-\alpha&space;\frac{\partial&space;J}{\partial&space;\theta_{ij}^{(l)}}" title="\theta_{ij}^{(l)}:=\theta_{ij}^{(l)}-\alpha \frac{\partial J}{\partial \theta_{ij}^{(l)}}" /></a> Repeat until convergence
 
-    - For i = 1 to m <br>
+- Further readings on backpropagation
 
-        Set $a^{(1)}=x^{(i)}$ <br>
-        Perform forward propogation to compute $a^{(l)}$ for l=2,3,...,L <br>
+  - [A gentle introduction to artificial neural networks](https://theclevermachine.wordpress.com/tag/backpropagation/)
+  - [Yes you should understand backprop](https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b)
+  - [a lecture from Stanford's CS231n course](https://www.youtube.com/watch?v=59Hbtz7XgjM)
 
-        Use $y^{(i)}$ to compute $\delta^{(L)}=a^{(L)}-y^{(i)}$ <br>
-        Compute $\delta^{(L-1)}$, $\delta^{(L-2)}$, ..., $\delta^{(2)}$ using $\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l+1)}.*a^{(l)}.*(1-a^{(l)})$ <br>
-        By convention, error does not include bias units
-
-        $\Delta_{ij}^{(l)}:=\Delta_{ij}^{(l)}+a_j^{(l)}\delta_i^{(l+1)}$ <br>
-        aka., $\Delta^{(l)}:=\Delta^{(l)}+\delta^{(l+1)}(a^{(l)})^T$
-
-    $D_{ij}^{(l)}:=\frac{1}{m}\Delta_{ij}^{(l)}+\lambda\Theta_{ij}^{(l)}$ if j≠0 <br>
-    $D_{ij}^{(l)}:=\frac{1}{m}\Delta_{ij}^{(l)}$ if j=0 <br>
-    
-    $\frac{\partial}{\partial \Theta_{ij}^{(l)}}J(\Theta)=D_{ij}^{(l)}$
-
-    Update weights: <br>
-    $\theta_{j}^{(l)}:=\theta_{j}^{(l)}-\alpha\frac{\partial}{\partial \theta_j^{(l)}}J(\theta)$
-
-  - Further reading on backpropagation
-    - [Yes you should understand backprop](https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b)
-    - [a lecture from Stanford's CS231n course](https://www.youtube.com/watch?v=59Hbtz7XgjM)
-
-### 1.8. Mean squared error function
-
-- #### Cost function
-
-  $E=\frac{1}{2}\sum_i(y_{i}-f(\theta x_{i}))^2$
-
-- #### Gradient
-
-  $\frac{\partial}{\partial \theta_j}E=-(y_{i}-f(\theta x_{i}))\frac{\partial f(\theta x_{i})}{\partial (\theta x_{i})}x_i$
-
-  Update weights: <br>
-  $\theta_{j}:=\theta_{j}-\alpha\frac{\partial}{\partial \theta_j}E$
-
-- #### Gradeint descent
-
-  Initialize weights $\Theta_{ij}$
-
-  - Near 0
-  - All have different starting values
-  - A good value for the scale is $\frac{1}{\sqrt{n}}$ where n is the number of input units
-
-  Set $\Delta_{ij}^{(l)}=0$ <br>
-  For each record in training data:
-
-  - Forward propogation to calculate output unit $a=f(\theta x_{i})$ 
-  - Calculate error term for output unit $\delta^{(L)}=(y_{i}-f(\theta x_{i}))\frac{\partial f(\theta x_{i})}{\partial (\theta x_{i})}$. For sigmoid function $f$, $\frac{\partial f(\theta x_{i})}{\partial (\theta x_{i})}=f(\theta x_{i})(1-f(\theta x_{i}))$
-  - Compute $\delta^{(L-1)}$, $\delta^{(L-2)}$, ..., $\delta^{(2)}$ using $\delta^{(l)}=(\Theta^{(l)})^T\delta^{(l+1)}.*a^{(l)}.*(1-a^{(l)})$
-  - Update the weight step $\Delta_{ij}^{(l)} = \Delta_{ij}^{(l)} + \delta^{(l+1)}(a^{(l)})^T$
-
-  Update weights $\theta_{j}:=\theta_{j}+\frac{\alpha}{m}\Delta_{ij}^{(l)}$ where m is the number of records
-
-  <img src="Resources/deep_learning/multi_layer_weights.png" alt="multi_layer_weights" width="400">
-
-### 1.9. Some useful terminology
+### 1.7. Some useful terminology
 
 - **One epoch** = one forward pass and one backward pass of all the training examples
 - **Batch size** = the number of training examples in one forward/backward pass. The higher the batch size, the more memory space you'll need.
 - **Number of iterations** = number of passes, each pass using [batch size] number of examples. To be clear, one pass = one forward pass + one backward pass.
 
-Example: if you have 1000 training examples, and your batch size is 500, then it will take 2 iterations to complete 1 epoch.
+  Example: if you have 1000 training examples, and your batch size is 500, then it will take 2 iterations to complete 1 epoch.
 
-## 2. Training neural networks
+## 2. Improving deep neural networks
 
-### 2.1. Resolve overfitting
+Orthogonalization
+
+- Optimize cost function J, e.g. via gradient descent
+- Reduce overfitting, e.g., via regularization
+
+### 2.1. Setting up deep neural network applications
+
+- #### Train / Dev / Test sets
+
+  - For relatively small dataset, 70/30 or 60/20/20 train-dev-test split works well. But for much larger datasets, 98/1/1 or 99.5/0.25/0.25 is more reasonable sometimes.
+    - Dev set is also known as "development set" or "hold-out cross validation set".
+  - Make sure that Dev and Test sets come from the same distribution as Train set. In real applications Training set and Test/Dev sets might be mismatched.
+  - Not having a Test set might be okay sometimes. Only Dev set.
+
+- #### Bias and variance
+
+  - High bias (based on training set performance)
+    - Bigger networks
+    - Train longer
+    - Use more advanced algorithms
+    - (NN architecture search)
+
+  - High Variance (based on dev vs. training set performance)
+    - More data
+    - Regularization
+    - (NN architecture search)
+
+  - In deep learning, there isn't necessarily a "bias-variance tradeoff", e.g. when using more data, or when using a bigger network (with regularization).
+
+### 2.2. Reduce overfitting
+
+- #### Getting more data
+
+- #### Data augmentation
+
+  - Rotation, resizing, random cropping, flipping, shearing, local warping, etc.
+  - Color shifting, color distortion (e.g. "PCA color augmentation")
 
 - #### Early stopping
 
-  Increase model complexity, use gradient descent to train the model until testing error start to increase.
+  Increase model complexity or the number of epochs, use gradient descent to train the model until cross validation error starts to increase.
+
+  <img src="Resources/deep_learning/early_stopping.png" width=400>
+
+  - (-) Breaks orthogonalization, and simultaneously tries to optimize cost while reducing overfitting.
+  - (+) Running the gradient descent process just once, you get to try out values of small <a href="https://www.codecogs.com/eqnedit.php?latex=\theta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta" title="\theta" /></a>, mid-size <a href="https://www.codecogs.com/eqnedit.php?latex=\theta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta" title="\theta" /></a>, and large <a href="https://www.codecogs.com/eqnedit.php?latex=\theta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta" title="\theta" /></a>, without needing to try a lot of values of the L2 regularization hyperparameter <a href="https://www.codecogs.com/eqnedit.php?latex=\lambda" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\lambda" title="\lambda" /></a>.
 
 - #### Regularization
 
-  Penalize large coefficients to resolve overfitting
+  Penalize large coefficients to resolve overfitting. L2 regularization is most commonly used, and is also known as "weight decay".
 
-  - L1: $\lambda\sum_{j=1}^n|\Theta_j|$, small weights tend to go to 0, good for feature selection
-  - L2: $\lambda\sum_{j=1}^n\Theta_j^2$, maintains all weights small, better for training models
+  Error function with L2 regularization <br>
+  <a href="https://www.codecogs.com/eqnedit.php?latex=J=-\frac{1}{m}\sum_{i=1}^m&space;E(\hat{y}_i,&space;y_i)&plus;\frac{\lambda}{2m}\sum_{l=1}^L\left&space;\|&space;\Theta^{(l)}&space;\right&space;\|_F^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J=-\frac{1}{m}\sum_{i=1}^m&space;E(\hat{y}_i,&space;y_i)&plus;\frac{\lambda}{2m}\sum_{l=1}^L\left&space;\|&space;\Theta^{(l)}&space;\right&space;\|_F^2" title="J=-\frac{1}{m}\sum_{i=1}^m E(\hat{y}_i, y_i)+\frac{\lambda}{2m}\sum_{l=1}^L\left \| \Theta^{(l)} \right \|_F^2" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\left&space;\|&space;\Theta^{(l)}&space;\right&space;\|_F^2=\sum_{n=1}^{n^{(l-1)}}\sum_{j=1}^{n^{(l)}}(\theta_{ij}^{(l)})^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\left&space;\|&space;\Theta^{(l)}&space;\right&space;\|_F^2=\sum_{n=1}^{n^{(l-1)}}\sum_{j=1}^{n^{(l)}}(\theta_{ij}^{(l)})^2" title="\left \| \Theta^{(l)} \right \|_F^2=\sum_{n=1}^{n^{(l-1)}}\sum_{j=1}^{n^{(l)}}(\theta_{ij}^{(l)})^2" /></a> is the "Frobenius norm", and <a href="https://www.codecogs.com/eqnedit.php?latex=\Theta^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Theta^{(l)}" title="\Theta^{(l)}" /></a> are the linear coefficients excluding the bias units.
+
+  - (+) L2 regularization maintains all weights to be small.
 
 - #### Dropout
 
-  Randomly turn off some of the nodes to train all the nodes in neural networks
+  Randomly turn off some of the nodes to train all the nodes in neural networks. Dropout is a regularization technique. Learn more about "inverted dropout" [here](https://www.quora.com/What-is-inverted-dropout) when implementing dropout.
 
-### 2.2. Resolve local minimum
+  <img src="Resources/deep_learning/dropout2_kiank.mp4" width=600>
 
-- #### Random restart
+  - (+) As if working with a smaller neural network on every iteration, and so using a smaller neural network seems like it should have a regularizing effect.
+  - (+) Can't rely on any one feature, so have to spread out weights and hence shrinking the weights. Has similar effects to L2 regularization.
+  - (+) Very frequently used by computer vision, given the big input size.
+  - (-) Error function J is less well defined under dropout.
 
-  Start from different multiple positions to get the best minimum
+### 2.3. Setting up optimization problem
 
-- #### Momentum
+- #### Feature scaling
 
-  $\beta$: momentum <br>
-  step: gradient descent step <br>
-  step(n) = step(n) + $\beta$step(n-1) + $\beta^2$step(n-2) + ...
+  Calculate mean and variance using the training set, then subtract by the same mean and normalize by the same variance for both training and testing sets.
 
-### 2.3. Resolve too small gradient from sigmoid
+  <img src="Resources/deep_learning/normalized_feature.png" width=600>
 
-- #### Use other activation functions
+  - (+) Gradient descent converges much faster with feature scaling.
 
-  Hyperbolic tangent function
+- #### Random weight initialization partially solves vanishing / exploding gradients
 
-  <img src="Resources/deep_learning/activation_tanh.png" alt="activation_tanh" width=400>
+  Vanishing / exploding gradients: Weights (and gradients) can increase or decrease exponentially with the number of layers, causing exploding or vanishing gradients respectively, which makes training difficult.
 
-  Rectified linear unit (ReLU)
+  - (+) Careful choice of random weight initialization partially solves vanishing / exploding gradients.
 
-  <img src="Resources/deep_learning/activation_relu.png" alt="activation_relu" width=400>
+  Initialize weights (excluding biases) near 0 with different starting values to break symmetry. In order to try stabilizing the gradients near 1, a good value for the scale is <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{1}{\sqrt{n}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{1}{\sqrt{n}}" title="\frac{1}{\sqrt{n}}" /></a>, where n is the number of input units.
 
-### 2.4. Resolve humongous dataset
+  - ReLU: <a href="https://www.codecogs.com/eqnedit.php?latex=\xi&space;*&space;\sqrt{\frac{2}{n^{(l-1)}}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\xi&space;*&space;\sqrt{\frac{2}{n^{(l-1)}}}" title="\xi * \sqrt{\frac{2}{n^{(l-1)}}}" /></a> (He initialization), where <a href="https://www.codecogs.com/eqnedit.php?latex=\xi" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\xi" title="\xi" /></a> follows standard normal distribution
+  - tanh: <a href="https://www.codecogs.com/eqnedit.php?latex=\xi&space;*&space;\sqrt{\frac{1}{n^{(l-1)}}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\xi&space;*&space;\sqrt{\frac{1}{n^{(l-1)}}}" title="\xi * \sqrt{\frac{1}{n^{(l-1)}}}" /></a> (Xavier initialization) or <a href="https://www.codecogs.com/eqnedit.php?latex=\xi&space;*&space;\sqrt{\frac{{2}}{{n^{(l-1)}}&plus;n^{(l)}}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\xi&space;*&space;\sqrt{\frac{{2}}{{n^{(l-1)}}&plus;n^{(l)}}}" title="\xi * \sqrt{\frac{{2}}{{n^{(l-1)}}+n^{(l)}}}" /></a>
+
+- #### Gradient checking
+
+  Use numerical approximation of gradients to check that the implementation of backpropogation is correct.
+
+  - (i) Contatenate <a href="https://www.codecogs.com/eqnedit.php?latex=\theta^{(l)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta^{(l)}" title="\theta^{(l)}" /></a>'s into a giant vector; concatenate <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\partial&space;J}{\partial&space;\theta^{(l)}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\partial&space;J}{\partial&space;\theta^{(l)}}" title="\frac{\partial J}{\partial \theta^{(l)}}" /></a>'s into a giant vector
+
+  - (ii) For each component of <a href="https://www.codecogs.com/eqnedit.php?latex=\theta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta" title="\theta" /></a>:
+
+    Compute numerical approximation <br> <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{\partial&space;J}{\partial&space;\theta_i})_{approx}&space;:=&space;\frac{J(\theta_1,&space;\theta_2,&space;...,&space;\theta_i&plus;\epsilon,&space;...)-J(\theta_1,&space;\theta_2,&space;...,&space;\theta_i-\epsilon,&space;...)}{2\epsilon}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?(\frac{\partial&space;J}{\partial&space;\theta_i})_{approx}&space;:=&space;\frac{J(\theta_1,&space;\theta_2,&space;...,&space;\theta_i&plus;\epsilon,&space;...)-J(\theta_1,&space;\theta_2,&space;...,&space;\theta_i-\epsilon,&space;...)}{2\epsilon}" title="(\frac{\partial J}{\partial \theta_i})_{approx} := \frac{J(\theta_1, \theta_2, ..., \theta_i+\epsilon, ...)-J(\theta_1, \theta_2, ..., \theta_i-\epsilon, ...)}{2\epsilon}" /></a>
+
+    Check Euclidean distance <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\left&space;\|&space;(\frac{\partial&space;J}{\partial&space;\theta})_{approx}&space;-&space;\frac{\partial&space;J}{\partial&space;\theta}&space;\right&space;\|_2}{\left&space;\|&space;(\frac{\partial&space;J}{\partial&space;\theta})_{approx}&space;\right&space;\|_2&space;&plus;&space;\left&space;\|&space;\frac{\partial&space;J}{\partial&space;\theta}&space;\right&space;\|_2}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\left&space;\|&space;(\frac{\partial&space;J}{\partial&space;\theta})_{approx}&space;-&space;\frac{\partial&space;J}{\partial&space;\theta}&space;\right&space;\|_2}{\left&space;\|&space;(\frac{\partial&space;J}{\partial&space;\theta})_{approx}&space;\right&space;\|_2&space;&plus;&space;\left&space;\|&space;\frac{\partial&space;J}{\partial&space;\theta}&space;\right&space;\|_2}" title="\frac{\left \| (\frac{\partial J}{\partial \theta})_{approx} - \frac{\partial J}{\partial \theta} \right \|_2}{\left \| (\frac{\partial J}{\partial \theta})_{approx} \right \|_2 + \left \| \frac{\partial J}{\partial \theta} \right \|_2}" /></a>. Good if e.g. <a href="https://www.codecogs.com/eqnedit.php?latex=\epsilon" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\epsilon" title="\epsilon" /></a> = 1E-7, euclidean distance ≤ 1E-7
+
+  - Tips for implementing gradient checking
+    - Don't use in training, only to debug
+    - If algorithm fails grad check, look at components to try to identify bug
+    - Remember regularization
+    - Doesn't work with dropout
+    - Run at random initialization; perhaps again after some training when coefficients wander away from initial values.
+
+### 2.4. Optimization algorithms
+
+- #### Batch gradient descent
+
+  Process entire training data all at the same time. <br> Batch Size = Size of Training Set
+
+  - (+) Good for small training set (m≤~2000)
+  - (-) Slow training with large dataset
 
 - #### Stochastic gradient descent
 
-  Split the data into several batches, run gradient descent on each batch consecutively.
+  Split the data into several batches, run gradient descent on each batch consecutively. <br> Batch Size = 1
 
-## 3. Building a neural network with keras
+  - (-) Lose speedup from vectorization
+  - (-) Won't converge, always oscillate around the region of minimum. Can reduce learning rate slowly to address it.
 
-### 3.1. Optimizers in Keras
+- #### Mini-batch gradient descent
+
+  Shuffle the training data to ensure random split, partition the shuffled data into several mini-batches, and run gradient descent on each batch consecutively. Commonly-used batch sizes: 64, 128, 256, 512 given the way computer memory is layed out and accessed. <br> 1 < Batch Size < Size of Training Set
+
+  <img src="Resources/deep_learning/batch_vs_minibatch.png" width=500>
+
+  <img src="Resources/deep_learning/batch_vs_stochastic.png" width=400>
+
+  - (+) Fast training with large dataset (m>~2000)
+    - Vectorization
+    - Make progress without needing to wait until processing the entire training set
+  - (-) Doesn't always converge, sometimes oscillate around a very small region of minimum. Can reduce learning rate slowly to address it.
+
+- #### Exponentially weighted moving averages
+
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{\theta_t}=\beta&space;\&space;\overline{\theta_{t-1}}&space;&plus;&space;(1-\beta)&space;\theta_t" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{\theta_t}=\beta&space;\&space;\overline{\theta_{t-1}}&space;&plus;&space;(1-\beta)&space;\theta_t" title="\overline{\theta_t}=\beta \ \overline{\theta_{t-1}} + (1-\beta) \theta_t" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{\theta_t}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{\theta_t}" title="\overline{\theta_t}" /></a> is the moving average of <a href="https://www.codecogs.com/eqnedit.php?latex=\theta_t" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta_t" title="\theta_t" /></a> that approximately averages over <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{1}{1-\beta}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{1}{1-\beta}" title="\frac{1}{1-\beta}" /></a> time steps. Note that <a href="https://www.codecogs.com/eqnedit.php?latex=\beta^{\frac{1}{1-\beta}}&space;=&space;\frac{1}{e}&space;\approx&space;0.368" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta^{\frac{1}{1-\beta}}&space;=&space;\frac{1}{e}&space;\approx&space;0.368" title="\beta^{\frac{1}{1-\beta}} = \frac{1}{e} \approx 0.368" /></a>.
+  
+  - (-) Initial phase of the moving average tend to be underestimated. To correct for the bias and make it more accurate, use <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{\theta_t}^{\&space;corrected}&space;=&space;\frac{\overline{\theta_t}}{1-\beta^t}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{\theta_t}^{\&space;corrected}&space;=&space;\frac{\overline{\theta_t}}{1-\beta^t}" title="\overline{\theta_t}^{\ corrected} = \frac{\overline{\theta_t}}{1-\beta^t}" /></a>
+  - (+) Takes very little memory and is computationally efficient
+
+- #### Gradient descent with momentum
+
+  Compute an exponentially weighted moving average of the gradients, and then use that gradient to update weights. Commonly used <a href="https://www.codecogs.com/eqnedit.php?latex=\beta=0.9" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta=0.9" title="\beta=0.9" /></a>. No need to use the bias correction because the moving average will have warmed up and is no longer a biased estimate after just 10 iterations.
+
+  - On iteration t:
+
+    - Compute gradients <a href="https://www.codecogs.com/eqnedit.php?latex=J'(\theta)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J'(\theta)" title="J'(\theta)" /></a> on the current mini-batch
+    - Compute exponentially weighted moving averages of gradients <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{J'(\theta)}=\beta_1\&space;\overline{J'(\theta)}&space;&plus;&space;(1-\beta_1)&space;(J'(\theta))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{J'(\theta)}=\beta_1\&space;\overline{J'(\theta)}&space;&plus;&space;(1-\beta_1)&space;(J'(\theta))" title="\overline{J'(\theta)}=\beta_1\ \overline{J'(\theta)} + (1-\beta_1) (J'(\theta))" /></a>
+    - Update parameters <a href="https://www.codecogs.com/eqnedit.php?latex=\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\overline{J'(\theta)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\overline{J'(\theta)}" title="\theta := \theta - \alpha \ \overline{J'(\theta)}" /></a>
+
+  - (+) Speeds up learning
+    - (+) Smooths out the steps of gradient descent and prevents the oscillations during gradient descent from getting too big
+    - (+) Remediates local minimum problem
+  - (+) Almost always works better than gradient descent without momentum
+
+- #### RMSprop
+
+  Root mean square prop (RMSprop) computes an exponentially weighted average of the squares of the gradients, and then use both the original gradients and the averaged gradients to update weights.
+
+  - On iteration t:
+
+    - Compute gradients <a href="https://www.codecogs.com/eqnedit.php?latex=J'(\theta)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J'(\theta)" title="J'(\theta)" /></a> on the current mini-batch
+    - Compute exponentially weighted moving averages of the squares of the gradients <a href="https://www.codecogs.com/eqnedit.php?latex=\widetilde{J'(\theta)}=\beta_2\&space;\widetilde{J'(\theta)}&space;&plus;&space;(1-\beta_2)&space;(J'(\theta))^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widetilde{J'(\theta)}=\beta_2\&space;\widetilde{J'(\theta)}&space;&plus;&space;(1-\beta_2)&space;(J'(\theta))^2" title="\widetilde{J'(\theta)}=\beta_2\ \widetilde{J'(\theta)} + (1-\beta_2) (J'(\theta))^2" /></a>, which is large when oscillation is large
+    - Update parameters <a href="https://www.codecogs.com/eqnedit.php?latex=\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\frac{J'(\theta)}{\sqrt{\widetilde{J'(\theta)}}&plus;\epsilon}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\frac{J'(\theta)}{\sqrt{\widetilde{J'(\theta)}}&plus;\epsilon}" title="\theta := \theta - \alpha \ \frac{J'(\theta)}{\sqrt{\widetilde{J'(\theta)}}+\epsilon}" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\epsilon&space;\sim&space;10^{-8}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\epsilon&space;\sim&space;10^{-8}" title="\epsilon \sim 10^{-8}" /></a> is used to make sure the algorithm does not divide by 0
+
+  - (+) Speeds up learning
+
+- #### Adam (Adaptive moment estimation)
+
+  Adam = Momentum + RMSprop
+
+  <img src="Resources/deep_learning/momentum.png" width=600>
+
+  - On iteration t:
+
+    - Compute gradients <a href="https://www.codecogs.com/eqnedit.php?latex=J'(\theta)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?J'(\theta)" title="J'(\theta)" /></a> on the current mini-batch
+    - Compute exponentially weighted moving averages of gradients <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{J'(\theta)}=\beta_1\&space;\overline{J'(\theta)}&space;&plus;&space;(1-\beta_1)&space;(J'(\theta))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{J'(\theta)}=\beta_1\&space;\overline{J'(\theta)}&space;&plus;&space;(1-\beta_1)&space;(J'(\theta))" title="\overline{J'(\theta)}=\beta_1\ \overline{J'(\theta)} + (1-\beta_1) (J'(\theta))" /></a>
+    - Compute exponentially weighted moving averages of the squares of the gradients <a href="https://www.codecogs.com/eqnedit.php?latex=\widetilde{J'(\theta)}=\beta_2\&space;\widetilde{J'(\theta)}&space;&plus;&space;(1-\beta_2)&space;(J'(\theta))^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widetilde{J'(\theta)}=\beta_2\&space;\widetilde{J'(\theta)}&space;&plus;&space;(1-\beta_2)&space;(J'(\theta))^2" title="\widetilde{J'(\theta)}=\beta_2\ \widetilde{J'(\theta)} + (1-\beta_2) (J'(\theta))^2" /></a>
+    - Bias correction <a href="https://www.codecogs.com/eqnedit.php?latex=\overline{J'(\theta)}^{\&space;corrected}&space;=&space;\frac{\overline{J'(\theta)}}{1-\beta_1^t}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\overline{J'(\theta)}^{\&space;corrected}&space;=&space;\frac{\overline{J'(\theta)}}{1-\beta_1^t}" title="\overline{J'(\theta)}^{\ corrected} = \frac{\overline{J'(\theta)}}{1-\beta_1^t}" /></a>
+    - Bias correction <a href="https://www.codecogs.com/eqnedit.php?latex=\widetilde{J'(\theta)}^{\&space;corrected}&space;=&space;\frac{\widetilde{J'(\theta)}}{1-\beta_1^t}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widetilde{J'(\theta)}^{\&space;corrected}&space;=&space;\frac{\widetilde{J'(\theta)}}{1-\beta_1^t}" title="\widetilde{J'(\theta)}^{\ corrected} = \frac{\widetilde{J'(\theta)}}{1-\beta_1^t}" /></a>
+    - Update parameters <a href="https://www.codecogs.com/eqnedit.php?latex=\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\frac{\overline{J'(\theta)}^{\&space;corrected}}{\sqrt{\widetilde{J'(\theta)}^{\&space;corrected}}&plus;\epsilon}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\theta&space;:=&space;\theta&space;-&space;\alpha&space;\&space;\frac{\overline{J'(\theta)}^{\&space;corrected}}{\sqrt{\widetilde{J'(\theta)}^{\&space;corrected}}&plus;\epsilon}" title="\theta := \theta - \alpha \ \frac{\overline{J'(\theta)}^{\ corrected}}{\sqrt{\widetilde{J'(\theta)}^{\ corrected}}+\epsilon}" /></a>
+
+  - Hyperparameters
+
+    learning rate <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /></a> : needs to be tuned <br>
+    first moment <a href="https://www.codecogs.com/eqnedit.php?latex=\beta_1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta_1" title="\beta_1" /></a> : 0.9 (commonly-used value) <br>
+    second moment <a href="https://www.codecogs.com/eqnedit.php?latex=\beta_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta_2" title="\beta_2" /></a> : 0.999 (commonly-used value) <br>
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\epsilon" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\epsilon" title="\epsilon" /></a> : 1e-8 (from the [Adam paper](https://arxiv.org/pdf/1412.6980.pdf))
+
+  - (+) Speeds up learning
+  - (+) Relatively low memory requirements (though higher than gradient descent with momentum)
+  - (+) Usually works well even with little tuning of hyperparameters (except <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha" title="\alpha" /></a>)
+
+- #### Learning rate decay
+
+  Slowly reducing the learning rate. Take bigger steps during the initial steps of learning, and take smaller steps as learning approaches to converge. There are many learning rate decay methods:
+
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha&space;=&space;\frac{1}{1&plus;{decay\_rate}*{epoch\_number}}\&space;\alpha_0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha&space;=&space;\frac{1}{1&plus;{decay\_rate}*{epoch\_number}}\&space;\alpha_0" title="\alpha = \frac{1}{1+{decay\_rate}*{epoch\_number}}\ \alpha_0" /></a>
+  - Exponential decay <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha&space;=&space;0.95^{epoch\_number}&space;\alpha_0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha&space;=&space;0.95^{epoch\_number}&space;\alpha_0" title="\alpha = 0.95^{epoch\_number} \alpha_0" /></a>
+  - <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha&space;=&space;\frac{k}{\sqrt{{epoch\_number}}}\&space;\alpha_0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha&space;=&space;\frac{k}{\sqrt{{epoch\_number}}}\&space;\alpha_0" title="\alpha = \frac{k}{\sqrt{{epoch\_number}}}\ \alpha_0" /></a>, or <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha&space;=&space;\frac{k}{\sqrt{t}}\&space;\alpha_0" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\alpha&space;=&space;\frac{k}{\sqrt{t}}\&space;\alpha_0" title="\alpha = \frac{k}{\sqrt{t}}\ \alpha_0" /></a>
+  - Discrete staircase
+  - Manual decay
+
+- #### The problem of local optima
+
+  In high dimensional space, local minimum very rare to find. It is unlikely to get stuck in a bad local optima, but plateaus (saddle points) can make learning slow. Advanced algorithms like Momentum, RMSprop, and Adam can speed up moving down the plateau and then getting off the plateau.
+
+  <img src="Resources/deep_learning/local_optima.png" width=600>
+
+### 2.5. Hyperparameter tuning
+
+- Tuning process
+
+  - Hyperparameters
+
+    Learning rate, <br>
+    number of hidden units, mini-batch size, momentum coefficient, <br>
+    number of layers, learning rate decay
+  - Use random sampling instead of a grid search to search over the space of hyperparameters more efficiently
+  - Coarse to fine search
+
+- Using an appropriate scale to pick hyperparameters
+
+  - Linear scale
+  - Logarithmic scale
+
+    ```python
+    # Sample on the log scale
+    r = -4 * np.random.rand()
+    alpha = 10 ** r
+    ```
+
+    Log scale can be used to sample hyperparameters for exponentially weighted moving averages
+
+- Hyperparameters in practice: Pandas vs. Caviar
+
+  - Re-evaluate hyperparameters occasionally
+  - Babysitting one model when not having enough CPUs and GPUs (like a panda) vs. training many models in parallel when having enough resources (like caviar)
+
+### 2.6. Batch normalization
+
+Batch normalization normalizes activations in a network to make training faster.
+
+- Implementing batch norm
+
+  - Given some intermediate values z in a layer of neural network, normalize z by the mean and variance of z across all data points in the currently mini-batch in that layer
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=z_{norm}&space;=&space;\frac{z-\mu}{\sqrt{\sigma^2&plus;\epsilon}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?z_{norm}&space;=&space;\frac{z-\mu}{\sqrt{\sigma^2&plus;\epsilon}}" title="z_{norm} = \frac{z-\mu}{\sqrt{\sigma^2+\epsilon}}" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\epsilon" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\epsilon" title="\epsilon" /></a> is added for numerical stability
+
+  - New z of that layer become
+
+    <a href="https://www.codecogs.com/eqnedit.php?latex=\widetilde{z}&space;=&space;\gamma&space;z_{norm}&space;&plus;&space;\beta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widetilde{z}&space;=&space;\gamma&space;z_{norm}&space;&plus;&space;\beta" title="\widetilde{z} = \gamma z_{norm} + \beta" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\gamma" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\gamma" title="\gamma" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=\beta" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta" title="\beta" /></a> are learnable parameters that normalize the mean and variance of these hidden unit z values
+
+  - During training, mean and variance are computed on the mini-batch, whereas during testing, mean and variance are estimated using exponentially weighted moving average across mini-batches during the training process
+
+- Why batch norm works
+
+  - (+) Speeds up learning by normalizing all the input features to take on a similar range of values
+  - (+) Makes the weights in later layer of the network more robust to changes to weights in earlier layers of the network
+
+    Batch norm limits the amount to which updating the parameters in the earlier layers can affect the distribution of values that the later layer sees and therefore has to learn on, i.e. less shift-around in the distribution (Covariate Shift). Therefore, batch norm allows each layer of the network to learn more independently of other layers, which has the effect of speeding up of learning in the whole network.
+
+    <img src="Resources/deep_learning/covariate_shift.png" width=500>
+
+  - (+) Batch norm has a very slight regularization effect
+  
+    Each mini-batch is scaled by the mean/variance computed on just that mini-batch, which adds some noise to the values z within that minibatch. So similar to dropout, it adds some noise to each hidden layer’s activations, therefore having slight regularization effect.
+
+### 2.7. Deep learning frameworks
+
+- Popular frameworks
+
+  - Caffe/Caffe2
+  - CNTK
+  - DL4J
+  - Keras
+  - Lasagne
+  - mxnet
+  - PaddlePaddle
+  - TensorFlow
+  - Theano
+  - Torch
+
+- Choosing deep learning frameworks
+
+  - Ease of programming (development and deployment)
+  - Running speed
+  - Truly open (open source with good governance)
+
+- TensorFlow and code example
+
+  Tensorflow is a programming framework used in deep learning. The two main object classes in tensorflow are Tensors and Operators. The backpropagation and optimization is automatically done when running the session on the "optimizer" object.
+
+  <img src="Resources/deep_learning/tensorflow.png" width=200>
+
+  ```python
+  # Dependencies
+  import numpy as np
+  import tensorflow as tf
+  ```
+
+  1. Create Tensors (variables) that are not yet executed/evaluated
+
+      ```python
+      # Create Tensors that are not yet evaluated
+      coefficients = np.array([[1], [-20], [25]])
+      w = tf.Variable([0], dtype=tf.float32, name="w")
+      x = tf.placeholder(dtype=tf.float32, shape=[3,1], name="x") # specify values for later
+      ```
+
+      ```python
+      # Create constants
+      epsilon = tf.constant(np.random.randn(3,1), name = "epsilon")
+      epsilon = tf.constant(10)
+      ```
+
+      ```python
+      # Create Xavier initialization for weights
+      W1 = tf.get_variable(name="W1", shape=[25,12288], initializer = tf.contrib.layers.xavier_initializer(seed = 1))
+
+      # Create zero initialization for biases
+      b1 = tf.get_variable("b1", [25,1], initializer = tf.zeros_initializer())
+      ```
+
+      ```python
+      # Create array of ones and zeros
+      tf.ones(shape)
+      tf.zeros(shape)
+      ```
+
+  2. Specify operations between those Tensors
+
+      ```python
+      # Equivalent syntax to specify operations
+      cost = (w-5)**2
+      cost = tf.add(tf.add(w**2, tf.multiply(-10, w)), 25)
+      cost = x[0][0]*w**2 + x[1][0]*w + x[2][0]
+      ```
+
+      ```python
+      # Specify cost averaged across samples
+      cost1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = labels))
+      ```
+
+      ```python
+      # Specify optimizer
+      optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(cost)
+      ```
+
+      Examples of operation:
+
+      `tf.matmul(..., ...)` matrix multiplication <br>
+      `tf.multiply(..., ...)` element-wise multiplication <br>
+      `tf.add(..., ...)` addition <br>
+      `tf.sigmoid(...)`, `tf.softmax(...)`, `tf.nn.relu(...)` activations <br>
+      `tf.nn.sigmoid_cross_entropy_with_logits(logits = ...,  labels = ...)` compute cost <br>
+      `tf.one_hot(labels, depth, axis)` one-hot encoding
+
+  3. Initialize Tensors
+
+      ```python
+      # Initialize all the Tensors
+      init = tf.global_variables_initializer()
+      ```
+
+  4. Create a session to run operations
+
+      ```python
+      # Create a session to run operations
+      session = tf.Session()
+
+      # Run the initialization
+      session.run(init)
+      print(session.run(w))
+
+      # Run the session to execute the "optimizer"
+      for i in range(1000):
+          session.run(optimizer, feed_dict={x:coefficients})
+      print(session.run(w))
+
+      # Close the session
+      session.close()
+      ```
+
+      ```python
+      # Alternative syntax
+      with tf.Session() as session:
+          session.run(init)
+          print(session.run(w))
+      ```
+
+## 3. Structuring machine learning projects
+
+### 3.1. Orthogonalization
+
+Modifying a component of an algorithm will not create or propagate side effects to other components of the system.
+
+- Analogy in tuning old tv
+
+  <img src="Resources/deep_learning/old_tv.jpg" width=300>
+
+- Chain of objectives in machine learning
+
+  - Fit training set well on cost function
+
+      → Use bigger neural network, or switch to better optimization algorithm
+
+  - Fit dev set well on cost function
+
+      → Implement harder regularization, or gather more training examples. Note that early stopping will reduce dev set error but will increase training set error, thus violate orthoganalization
+
+  - Fit test set well on cost function
+
+      → Use bigger dev set
+
+  - performs well in real world
+
+      → Change dev set or the cost function
+
+### 3.2. Setting up your goal
+
+- #### Single number evaluation metric
+  
+  Use a single number evaluation metric speeds up the iterative process of improving machine learning model. Sometimes requires averaging e.g. among different metrics, or among geographical locations.
+
+- #### Satisficing and optimizing metric
+
+  Set 1 optimizing metric and others as satisficing metrics
+
+  - **Optimizing metric:** e.g. maximizing accuracy
+  - **Satisficing metric(s):** e.g. subject to running time ≤ 100 ms
+
+- #### Train/dev/test distributions
+
+  Randomly shuffle data before splitting train/dev/test sets to make sure dev/test sets have the same distribution. Choose dev/test sets to reflect data you expect to get in the future and that you consider important to do well on.
+
+- #### Size of dev/test sets
+
+  Set the dev/test set sizes to be big enough to give high confidence in the overall performance of the model. For relatively small dataset, 70/30 or 60/20/20 train-dev-test split works well. But for much larger datasets, 98/1/1 or 99.5/0.25/0.25 is more reasonable sometimes.
+
+- #### When to change dev/test sets and metrics
+
+  - Change evaluation metric when it is no longer giving correct rank-order preferences between algorithms. E.g. weight the importance of different classes in the error metric
+  - Change dev/test sets and/or metric when model does well on dev/test sets but does no do well on real application.
+
+    <img src="Resources/deep_learning/test_vs_app.png" width=500>
+
+### 3.3. Comparing to human-level performance for bias/variance analysis
+
+- Bayes optimal error
+
+  Bayes optimal error is the very best theoretical function for mapping from x to y.
+
+  <img src="Resources/deep_learning/bayes_error.png" width=500>
+
+- Humans are quite good at a lot of tasks, especially natural perception tasks. When model worse than humans:
+
+  - Get labeled data from humans
+  - Gain insight from manual error analysis: why did a person get this right?
+  - Better analysis of bias/variance
+
+- Problems where machine learning significantly surpasses human-level performance
+
+  - Online advertising
+  - Product recommendations
+  - Logistics (predicting transit time)
+  - Loan approvals
+
+- Use human-level error as a proxy for Bayes error. Use human-level error as an anchor to focus on either **avoidable bias** or **variance**.
+
+  <img src="Resources/deep_learning/avoidable_bias_variance.png" width=400>
+
+  <img src="Resources/deep_learning/avoidable_bias_variance_sum.png" width=500>
+
+### 3.4. Error analysis
+
+- Carrying out error analysis
+
+  - Get ~100 mislabled dev set examples
+  - Count up the number of errors that fall into various different categories
+  - The fraction of examples that are mislabeled in different ways often this helps prioritize improving performance
+
+  <br>
+
+  |data point|error category 1|error category 2|...|comments|
+  |---|---|---|---|---|
+  |1| | | | |
+  |2| | | | |
+  |...| | | | |
+  |% of total| | | | |
+
+- Cleaning up incorrectly labeled data
+
+  - Training set: Deep learning algorithms are quite robust to random errors in the training set, less so to systematic errors in the training set.
+
+  - Dev set: Use error analysis to compute % error due to incorrect label.
+
+    - Overall dev set error
+    - Error due to incorrect label: if this accounts for relatively high fraction, fix incorrect labels
+    - Error due to other causes
+
+  - Correcting incorrect dev/test set examples
+
+    - Apply same process to your dev and test sets to make sure they continue to come from the same distribution
+    - Consider examining examples your algorithm got right in addition to ones it got wrong
+    - Train and dev/test data may now come from slightly different distributions, which is okay
+
+- Build the first system quickly, then iterate
+
+  - Set up dev/test set and metric
+  - Build initial system quickly
+  - Use Bias/Variance analysis & Error analysis to prioritize next steps
+
+### 3.5. Mismatched training and dev/test sets
+
+- Training and testing on different distributions
+
+  - Data of the targeted distribution often scarce
+  - Make sure dev/test sets have the targeted distribution
+  - Okay to have training set distribution slightly different from dev/test sets because deep learning algorithms are quite robust
+
+- Bias and variance with mismatched data distributions
+
+  - When training and dev/test sets have mismatched distributions, hard to analyze bias/variance directly
+  - **Training-dev set:** Same distribution as training set, but not used for training
+
+  <img src="Resources/deep_learning/avoidable_bias_variance_mismatch.png" width=600>
+
+- Addressing data mismatch
+
+  - Carry out manual error analysis to try to understand difference between training and dev/test sets
+  - Make training data more similar; or collect more data similar to dev/test sets
+    - E.g. Artificial data synthesis to add car noise, although risks overfitting
+
+### 3.6. Learning from multiple tasks
+
+- Transfer learning
+
+  Take knowledge the neural network has learned from one task (task A) and apply that knowledge to a separate task (task B).
+
+  - If you have a small dataset, add additional layers to train (and sometimes also retrain the last couple of pre-existing layers).
+  - If you have a lot of data, can retrain all the parameters in the network.
+    - "Pre-training", followed by "fine-tuning"
+
+  Transfer learning makes sense when:
+  
+  - Task A and B have the same input x.
+  - There are a lot more data for Task A than Task B.
+  - Low level features from A could be helpful for learning B.
+
+- Multi-task learning
+
+  Train one neural network to do many tasks, which can give you better performance than if you were to do the tasks in isolation.
+
+  - Each data point can have multiple positive labels.
+  - If some of the earlier features in neural network can be shared between different types of learning objects, training one neural network to do multiple tasks results in better performance than training completely separate neural networks.
+  - Works when some images have only a subset of the labels and others are missing.
+
+  Multi-task learning makes sense when:
+
+  - Training on a set of tasks that could benefit from having shared lower-level features.
+  - Usually: Amount of data you have for each task is quite similar, so task 1 can benefit from having a lot more shared data from other tasks.
+  - Can train a big enough neural network to do well on all the tasks.
+
+### 3.7. End-to-end deep learning
+
+- End-to-end deep learning
+
+  Take all the multiple stages of data processing, and replace it usually with just a single neural network. The end-to end-approach starts to work really well when data size becomes very large.
+
+  <img src="Resources/deep_learning/end_to_end_learning.png" width=600>
+
+  <img src="Resources/deep_learning/end_to_end_learning2.png" width=600> <br>
+
+  <br>
+
+  - Note that with small to medium amount of data, traditional and intermediate approaches might work better than end-to-end deep learning.
+
+- Whether to use end-to-end deep learning
+
+  - (+) End-to-end deep learning lets the data speak, without being forced to reflect human preconceptions
+  - (+) Less hand-designing of components needed
+  - (-) May need large amount of data
+  - (-) Excludes potentially useful hand-designed components
+
+  **Key question to ask:** Do you have sufficient data to learn a function of the complexity needed to map x to y?
+
+## 4. Building a neural network with keras
+
+Keras is a high-level neural networks API (programming framework), written in Python and capable of running on top of several lower-level frameworks including TensorFlow and CNTK. Good for rapid prototyping.
+
+### 4.1. Optimizers in Keras
 
 Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index.html#gradientdescentoptimizationalgorithms)
 
@@ -313,7 +924,21 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
 
   RMS stands for Root Mean Squared Error decreases the learning rate by dividing it by an exponentially decaying average of squared gradients.
 
-### 3.2. Keras script
+### 4.2. Models in Keras
+
+There are two ways to build Keras models: *sequential* and *functional*.
+
+- **Sequential** API
+
+  - Creates models layer-by-layer.
+  - Cannot create models that share layers or have multiple inputs or outputs.
+
+- **Functional** API
+  
+  - Creates models that have a lot more flexibility, e.g. can connect layers to (literally) any other layer.
+  - Possible to create complex networks such as siamese networks and residual networks.
+
+### 4.3. Keras code example with sequential model
 
 - #### Sequential model
 
@@ -422,7 +1047,140 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
   voice_model = load_model("voice_model_trained.h5")
   ```
 
-## 4. Deep learning with PyTorch
+### 4.4. Keras code example with functional model
+
+- **Dependencies**
+
+  ```python
+  import numpy as np
+  from keras import layers
+  from keras.layers import Input, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D
+  from keras.layers import AveragePooling2D, MaxPooling2D, Dropout, GlobalMaxPooling2D, GlobalAveragePooling2D
+  from keras.models import Model
+  from keras.preprocessing import image
+  from keras.utils import layer_utils
+  from keras.utils.data_utils import get_file
+  from keras.applications.imagenet_utils import preprocess_input
+  import pydot
+  from IPython.display import SVG
+  from keras.utils.vis_utils import model_to_dot
+  from keras.utils import plot_model
+  from kt_utils import *
+
+  import keras.backend as K
+  K.set_image_data_format('channels_last')
+  import matplotlib.pyplot as plt
+  from matplotlib.pyplot import imshow
+
+  %matplotlib inline
+  ```
+
+- **Normalize the dataset and learn about its shapes**
+
+  ```python
+  X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_dataset()
+
+  # Normalize image vectors
+  X_train = X_train_orig/255.
+  X_test = X_test_orig/255.
+
+  # Reshape
+  Y_train = Y_train_orig.T
+  Y_test = Y_test_orig.T
+
+  print ("number of training examples = " + str(X_train.shape[0]))
+  print ("number of test examples = " + str(X_test.shape[0]))
+  print ("X_train shape: " + str(X_train.shape))
+  print ("Y_train shape: " + str(Y_train.shape))
+  print ("X_test shape: " + str(X_test.shape))
+  print ("Y_test shape: " + str(Y_test.shape))
+  ```
+
+- **Build a function to describe the model**
+
+  ```python
+  def HappyModel(input_shape):
+      """
+      Implementation of the HappyModel.
+
+      Arguments:
+      input_shape -- shape of the images of the dataset
+
+      Returns:
+      model -- a Model() instance in Keras
+      """
+
+      # Define the input placeholder as a tensor with shape of an input image
+      X_input = Input(input_shape)
+
+      # Zero-Padding: pads the border of X_input with zeroes
+      X = ZeroPadding2D((3, 3))(X_input)
+
+      # CONV -> BN -> RELU Block applied to X
+      X = Conv2D(32, (7, 7), strides = (1, 1), name = 'conv0')(X)
+      X = BatchNormalization(axis = 3, name = 'bn0')(X)
+      X = Activation('relu')(X)
+
+      # MAXPOOL
+      X = MaxPooling2D((2, 2), name='max_pool')(X)
+
+      # FLATTEN X (means convert it to a vector) + FULLYCONNECTED
+      X = Flatten()(X)
+      X = Dense(1, activation='sigmoid', name='fc')(X)
+
+      # Create Keras model instance, which will be used to train/test the model
+      model = Model(inputs = X_input, outputs = X, name='HappyModel')
+
+      return model
+  ```
+
+- **Compile, train, and test the model**
+
+  ```python
+  # Create the model
+  happyModel = HappyModel(X_train[0].shape)
+
+  # Compile the model
+  happyModel.compile(optimizer = "adam", loss = "binary_crossentropy", metrics = ["accuracy"])
+
+  # Train the model
+  happyModel.fit(x = X_train, y = Y_train, epochs = 50, batch_size = 20)
+
+  # Test the model
+  preds = happyModel.evaluate(x = X_test, y = Y_test)
+  print ("Loss = " + str(preds[0]))
+  print ("Test Accuracy = " + str(preds[1]))
+  ```
+
+- **Model prediction**
+
+  ```python
+  # Predict new image
+  img_path = 'images/my_image.jpg'
+  img = image.load_img(img_path, target_size=(64, 64))
+  imshow(img)
+  x = image.img_to_array(img)
+  x = np.expand_dims(x, axis=0)
+  x = preprocess_input(x)
+  print(happyModel.predict(x))
+  ```
+
+- **Other useful functions**
+
+  - `model.summary()`: prints the details of the layers in a table with the sizes of its inputs/outputs.
+
+    ```python
+    happyModel.summary()
+    ```
+
+  - `plot_model()`: plots computation graph in a nice layout. Can save it as ".png" using SVG().
+
+    ```python
+    plot_model(happyModel, to_file='HappyModel.png')
+    SVG(model_to_dot(happyModel).create(prog='dot', format='svg'))
+    ```
+
+## 5. Deep learning with PyTorch
 
 [PyTorch](https://pytorch.org/) is a framework for building and training neural networks
 
@@ -430,7 +1188,7 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
 - Moves tensors (a generalization of matrices) to GPUs for faster processing
 - Automatically calculates gradients (for backpropagation) and another module specifically for building neural networks
 
-### 4.1. Pytorch syntax
+### 5.1. Pytorch syntax
 
 - Dependencies
 
@@ -483,7 +1241,7 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
   a
   ```
 
-### 4.2. Initialize data
+### 5.2. Initialize data
 
 - #### Dependencies
 
@@ -551,7 +1309,7 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
 - #### Make iterator of data
 
   ```python
-  # Looping through it, get a batch on each loop 
+  # Looping through it, get a batch on each loop
   for images, labels in trainloader:
       pass
 
@@ -588,7 +1346,7 @@ Blog post on algorithms [here](http://ruder.io/optimizing-gradient-descent/index
   plt.imshow(images[0].numpy().squeeze(), cmap='Greys_r');
   ```
 
-### 4.3. Define layers and operations
+### 5.3. Define layers and operations
 
 <img src="resources/deep_learning/pytorch_image_nn.png" alt="pytorch_image_nn" width=550>
 
@@ -605,17 +1363,17 @@ Due to [inaccuracies with representing numbers as floating points](https://docs.
           self.fc2 = nn.Linear(128, 64)
           # Output layer, 10 units - one for each digit
           self.fc3 = nn.Linear(64, 10)
-          
+
       def forward(self, x):
           ''' Forward pass through the network, returns the output logits '''
-          
+
           x = self.fc1(x)
           x = F.relu(x)
           x = self.fc2(x)
           x = F.relu(x)
           x = self.fc3(x)
           # x = F.softmax(x, dim=1)
-          
+
           return x
 
   model = Network()
@@ -630,7 +1388,7 @@ Due to [inaccuracies with representing numbers as floating points](https://docs.
   class Network(nn.Module):
       def __init__(self, input_size, output_size, hidden_layers, drop_p=0.5):
           ''' Builds a feedforward network with arbitrary hidden layers.
-          
+
               Arguments
               ---------
               input_size: integer, size of the input
@@ -639,30 +1397,30 @@ Due to [inaccuracies with representing numbers as floating points](https://docs.
               drop_p: float between 0 and 1, dropout probability
           '''
           super().__init__()
-          
+
           # Add the first layer, input to a hidden layer
           self.hidden_layers = nn.ModuleList([nn.Linear(input_size, hidden_layers[0])])
-          
+
           # Add a variable number of more hidden layers
           layer_sizes = zip(hidden_layers[:-1], hidden_layers[1:])
           self.hidden_layers.extend([nn.Linear(h1, h2) for h1, h2 in layer_sizes])
-          
+
           # Add the output layer
           self.output = nn.Linear(hidden_layers[-1], output_size)
-          
+
           # Include dropout
           self.dropout = nn.Dropout(p=drop_p) # Has to be turned off during inference
-          
+
       def forward(self, x):
           ''' Forward pass through the network, returns the output logits '''
-          
+
           # Forward through each layer in `hidden_layers`, with ReLU activation and dropout
           for linear in self.hidden_layers:
               x = F.relu(linear(x))
               x = self.dropout(x)
-          
+
           x = self.output(x)
-          
+
           return F.log_softmax(x, dim=1)
   ```
 
@@ -707,7 +1465,7 @@ Due to [inaccuracies with representing numbers as floating points](https://docs.
   model
   ```
 
-### 4.4. Define criterion, optimizer, and validation
+### 5.4. Define criterion, optimizer, and validation
 
 - #### Define loss function criterion and optimizer
 
@@ -746,11 +1504,11 @@ Due to [inaccuracies with representing numbers as floating points](https://docs.
           ps = torch.exp(output) # get the class probabilities from log-softmax
           equality = (labels.data == ps.max(dim=1)[1])
           accuracy += equality.type(torch.FloatTensor).mean()
-      
+
       return test_loss, accuracy
   ```
 
-### 4.5. Train a neural network
+### 5.5. Train a neural network
 
 Torch provides a module, `autograd`, for automatically calculating the gradient of tensors. It does this by keeping track of operations performed on tensors. Set `requires_grad` on a tensor. You can do this at creation with the `requires_grad` keyword, or at any time with `x.requires_grad_(True)`.
 
@@ -776,11 +1534,11 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
 - #### An example forward pass
 
   ```python
-  # Grab some data 
+  # Grab some data
   dataiter = iter(trainloader)
   images, labels = dataiter.next()
 
-  # Resize images into a 1D vector, new shape is (batch size, color channels, image pixels) 
+  # Resize images into a 1D vector, new shape is (batch size, color channels, image pixels)
   images.resize_(64, 1, 784)
   # or images.resize_(images.shape[0], 1, 784) to automatically get batch size
 
@@ -806,10 +1564,10 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
 
           # Flatten MNIST images into a 784 long vector
           images.resize_(images.size()[0], 784)
-          
+
           # Clear the gradients, do this because gradients are accumulated
           optimizer.zero_grad()
-          
+
           # Forward pass to get the output
           output = model.forward(images)
 
@@ -818,17 +1576,17 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
 
           # Backward pass to calculate the gradients
           loss.backward()
-          
+
           # Update weights
           optimizer.step()
-          
+
           running_loss += loss.item()
-          
+
           if steps % print_every == 0:
               print("Epoch: {}/{}... ".format(e+1, epochs),
                     "Loss: {:.4f}".format(running_loss/print_every))
               # print('Updated weights - ', model.fc1.weight)
-              
+
               running_loss = 0
   ```
 
@@ -844,7 +1602,7 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
 
       # Dropout is turned on for training
       model.train()
-      
+
       for images, labels in trainloader:
           steps += 1
           images.resize_(images.size()[0], 784)
@@ -854,27 +1612,27 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
           loss.backward()
           optimizer.step()
           running_loss += loss.item()
-          
+
           if steps % print_every == 0:
               # Make sure network is in eval mode for inference
               model.eval()
-              
+
               # Turn off gradients for validation, saves memory and computations
               with torch.no_grad():
                   test_loss, accuracy = validation(model, testloader, criterion)
-                  
+
               print("Epoch: {}/{}.. ".format(e+1, epochs),
                     "Training Loss: {:.3f}.. ".format(running_loss/print_every),
                     "Test Loss: {:.3f}.. ".format(test_loss/len(testloader)),
                     "Test Accuracy: {:.3f}".format(accuracy/len(testloader)))
-              
+
               running_loss = 0
-              
+
               # Make sure training is back on
               model.train()
   ```
 
-### 4.6. Inference
+### 5.6. Inference
 
 - #### Check predictions
 
@@ -893,14 +1651,14 @@ Torch provides a module, `autograd`, for automatically calculating the gradient 
   # If output of the network are logits, need to take softmax for probabilities
   ps = F.softmax(output, dim=1)
 
-  # If output are lo-softmax, need to take exponential for probabilities
+  # If output are log-softmax, need to take exponential for probabilities
   ps = torch.exp(output)
 
   # Plot the image and probabilities
   helper.view_classify(img.view(1, 28, 28), ps)
   ```
 
-### 4.7. Save and load trained networks
+### 5.7. Save and load trained networks
 
 Need to save both model architecture and network parameters (`state_dict`)
 
@@ -924,22 +1682,24 @@ Need to save both model architecture and network parameters (`state_dict`)
                               checkpoint['output_size'],
                               checkpoint['hidden_layers'])
       model.load_state_dict(checkpoint['state_dict'])
-      
+
       return model
 
   model = load_checkpoint('checkpoint.pth')
   print(model)
   ```
 
-### 4.8. Transfer learning with CUDA
+### 5.8. Transfer learning with CUDA
 
 Transfer learning: use a pre-trained network on images not in the training set.
 
-Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.org/) (available from [`torchvision.models`](http://pytorch.org/docs/0.3.0/torchvision/models.html)), can be used to solved challenging problems in computer vision. ImageNet, a massive dataset with >1 million labeled images in 1000 categories, is used to train deep neural networks using an architecture called [convolutional layers](https://www.youtube.com/watch?v=2-Ol7ZB0MmU). These trained models work astonishingly well as feature detectors for images they weren't trained on.
+Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.org/) (available from [`torchvision.models`](http://pytorch.org/docs/0.3.0/torchvision/models.html)), can be used to solved challenging problems in computer vision. ImageNet, a massive dataset with >1 million labeled images in 1000 categories, is used to train deep neural networks using an architecture called convolutional layers. These trained models work astonishingly well as feature detectors for images they weren't trained on. Learn more about convolutional neural networks [here](cnn.md).
+
+<img src="Resources/deep_learning/cnn.png">
 
 - #### Initialize data
 
-  - Most of the pretrained models require the input to be 224x224 images. 
+  - Most of the pretrained models require the input to be 224x224 images.
   - Match the normalization used when the models were trained: for the color channels, the means are [0.485, 0.456, 0.406] and the standard deviations are [0.229, 0.224, 0.225]
 
   ```python
@@ -950,12 +1710,12 @@ Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.o
                                          transforms.RandomResizedCrop(224),
                                          transforms.RandomHorizontalFlip(),
                                          transforms.ToTensor(),
-                                         transforms.Normalize([0.485, 0.456, 0.406], 
+                                         transforms.Normalize([0.485, 0.456, 0.406],
                                                               [0.229, 0.224, 0.225])])
   test_transforms = transforms.Compose([transforms.Resize(256),
                                         transforms.CenterCrop(224),
                                         transforms.ToTensor(),
-                                        transforms.Normalize([0.485, 0.456, 0.406], 
+                                        transforms.Normalize([0.485, 0.456, 0.406],
                                                              [0.229, 0.224, 0.225])])
 
   # Pass transforms in here, then run the next cell to see how the transforms look
@@ -988,7 +1748,7 @@ Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.o
                             ('fc2', nn.Linear(500, 2)),
                             ('output', nn.LogSoftmax(dim=1))
                             ]))
-      
+
   model.classifier = classifier
   ```
 
@@ -1016,9 +1776,9 @@ Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.o
 
   for e in range(epochs):
       for images, labels in iter(trainloader):
-          
+
           images, labels = images.to(device), labels.to(device) # Move input and label tensors to the GPU
-          
+
           steps += 1
           optimizer.zero_grad()
           output = model.forward(images)
@@ -1026,14 +1786,14 @@ Pre-trained networks, e.g. networks trained on [ImageNet](http://www.image-net.o
           loss.backward()
           optimizer.step()
           running_loss += loss.item()
-          
+
           # get the class probabilities from log-softmax
-          ps = torch.exp(output) 
+          ps = torch.exp(output)
           equality = (labels.data == ps.max(dim=1)[1])
           train_accuracy += equality.type(torch.FloatTensor).mean()
-          
+
           if steps % print_every == 0:
-              
+
               print("Epoch: {}/{}.. ".format(e+1, epochs),
                 "Training Loss: {:.3f}.. ".format(running_loss/print_every))
               running_loss = 0

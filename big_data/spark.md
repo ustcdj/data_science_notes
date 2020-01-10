@@ -3,28 +3,20 @@
 - [Spark](#spark)
   - [1. What is Spark](#1-what-is-spark)
     - [1.1. Spark vs. Hadoop](#11-spark-vs-hadoop)
-    - [1.2. Streaming data](#12-streaming-data)
+    - [1.2. Spark ecosystem](#12-spark-ecosystem)
     - [1.3. Four different modes to setup Spark](#13-four-different-modes-to-setup-spark)
     - [1.4. Spark use cases](#14-spark-use-cases)
     - [1.5. You don't always need Spark](#15-you-dont-always-need-spark)
     - [1.6. Spark's limitations](#16-sparks-limitations)
     - [1.7. Beyond Spark for Storing and Processing Big Data](#17-beyond-spark-for-storing-and-processing-big-data)
-  - [2. Spark and functional programming](#2-spark-and-functional-programming)
-    - [2.1. Functional programming](#21-functional-programming)
-    - [2.2. Directed Acyclic Graph (DAG)](#22-directed-acyclic-graph-dag)
-    - [2.3. Maps and lambda functions](#23-maps-and-lambda-functions)
-    - [2.4. Imperative vs declarative programming](#24-imperative-vs-declarative-programming)
-    - [2.5. Resilient distributed dataset (RDD)](#25-resilient-distributed-dataset-rdd)
-  - [3. Data wrangling with Spark](#3-data-wrangling-with-spark)
-    - [3.1. Spark session](#31-spark-session)
-    - [3.2. Read and write data into Spark dataframe](#32-read-and-write-data-into-spark-dataframe)
-    - [3.3. Overview of the loaded data](#33-overview-of-the-loaded-data)
-    - [3.4. General functions](#34-general-functions)
-    - [3.5. Aggregate functions](#35-aggregate-functions)
-    - [3.6. User defined functions (UDF)](#36-user-defined-functions-udf)
-    - [3.7. Window functions](#37-window-functions)
-    - [3.8. Convert PySpark dataframe to pandas dataframe](#38-convert-pyspark-dataframe-to-pandas-dataframe)
-    - [3.9. Date](#39-date)
+  - [2. Spark architecture and functional programming](#2-spark-architecture-and-functional-programming)
+    - [2.1. Spark architecture](#21-spark-architecture)
+    - [2.2. Functional programming](#22-functional-programming)
+    - [2.3. Directed Acyclic Graph (DAG)](#23-directed-acyclic-graph-dag)
+    - [2.4. Maps and lambda functions](#24-maps-and-lambda-functions)
+    - [2.5. Imperative vs declarative programming](#25-imperative-vs-declarative-programming)
+    - [2.6. Resilient distributed dataset (RDD)](#26-resilient-distributed-dataset-rdd)
+    - [2.7. RDDs, Datasets, and DataFrames](#27-rdds-datasets-and-dataframes)
 
 ## 1. What is Spark
 
@@ -38,23 +30,28 @@
 
 - Spark does not include a file storage system. You can use Spark on top of HDFS but you do not have to. Spark can read in data from other sources as well such as [Amazon S3](https://aws.amazon.com/s3/).
 
-### 1.2. Streaming data
+### 1.2. Spark ecosystem
 
-- The use case is when you want to store and analyze data in real-time such as Facebook posts or Twitter tweets.
+<img src="resources/spark.png" width=400>
 
-- Spark has a streaming library called [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) although it is not as popular and fast as some other streaming libraries. Other popular streaming libraries include [Storm](http://storm.apache.org/) and [Flink](https://flink.apache.org/).
+- Spark core: General purpose computing engine
+- YARN: Cluster manager. Alternatives: Mesos, Spark Standalone
+- HDFS: Distributed storage system
+- Spark libraries
+
+  - Streaming data
+
+    - The use case is when you want to store and analyze data in real-time such as Facebook posts or Twitter tweets.
+
+    - Spark has a streaming library called [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) although it is not as popular and fast as some other streaming libraries. Other popular streaming libraries include [Storm](http://storm.apache.org/) and [Flink](https://flink.apache.org/).
 
 ### 1.3. Four different modes to setup Spark
 
 - Local mode - prototype
-- Other three modes - distributed and declares a cluster manager.
-    - The **cluster manager** is a separate process that monitors the available resources, and makes sure that all machines are responsive during the job.
-    - 3 different options of cluster managers
-        - Standalone cluster manager
-        - YARN (from Hadoop)
-        - Mesos (open source from UC Berkeley's AMPLab Coordinators)
 
     <img src="resources/spark_modes.png" width=450>
+
+- Other three modes - distributed and declares a cluster manager.
 
 ### 1.4. Spark use cases
 
@@ -89,11 +86,73 @@ Here are a few resources about different Spark use cases.
 
 - E.g., newer database storage systems like [HBase](https://hbase.apache.org/) or [Cassandra](http://cassandra.apache.org/); distributed SQL engines like [Impala](https://impala.apache.org/) and [Presto](https://prestodb.io/). Many of these technologies use query syntax.
 
-## 2. Spark and functional programming
+## 2. Spark architecture and functional programming
 
 Spark is written in Scala, which is a functional programming. There are application programming interfaces in Java, R, Python; e.g. Python API - `PySpark`
 
-### 2.1. Functional programming
+### 2.1. Spark architecture
+
+<img src="resources/spark_architecture.png" width=450>
+
+Spark cluster is set up in the classic master/worker configuration. The master node coordinates all processes that run on worker nodes.
+
+- The master node runs a **Driver** program, which is a separate JVM process.
+
+  - The driver program is responsible for **launching tasks**, which run on individual worker node. These tasks operate on subsets of RDDs (see Section 2.6. below) that are present on that node.
+  - The driver program hosts **SparkContext**, which is the gateway to any Spark application.
+  - The driver program run several groups of **services**
+    - SparkEnv
+    - DAGScheduler
+    - Task Scheduler
+    - SparkUI
+    - ...
+
+- The **Spark Application** is instantiated within the Driver program.
+
+  - Uses SparkContext as entry point to start a Spark Application.
+  - The Application will read data, perform a series of transformations and actions. These operations are represented in the form of a Directed Acyclic Graph (DAG) of RDDs.
+  - Internally, Spark creates **Stages** (physically execution plan). Multiple logical operations may be grouped together into a single physical stage, so each Stage is split into operations on RDD partitions called **Tasks**. These tasks are made up of the actual transformations and actions specified in the code.
+
+- **Execution** in Spark 2 has significant performance optimization
+
+  - Performance optimization is powered by the 2nd generation **Tungsten engine**, which introduces optimizations in Spark to make the Spark engine compute much faster:
+    - Eliminate virtual function calls
+    - Store data in registers, not RAM/cache
+    - Perform compiler optimization, e.g. loop unrolling. pipelining
+
+  - **Catalyst optimizer** is the optimization engine that powers Spark SQL as well as DataFrame API
+
+    <img src="resources/spark_catalyst.png" width=550>
+
+    - SQL query and DataFrame: relations to be processed
+    - Unresolved logical plan: unresolved as column types and existence yet to be ascertained
+    - Catalog: tracks tables in all data sources to resolve plan
+    - Logical plan: output of the analysis phase
+    - Optimized logical plan: optimize costs of predicate pushdown, projection pruning, null propagation, expression simplification
+    - Physical plan: generate different alternative physical plans for this optimized logical plan. Here Catalyst interfaces with the Spark execution engine Tungsten
+    - Cost models: apply cost models to find the best physical plan
+    - Selected physical plan: generate Java bytecode to run on each machine
+
+- **SparkContext**, hosted by the Driver program, is the entry point to Spark application
+
+  - Interact with all the Spark constructs for distributed data processing, e.g. create RDDs, accumulators, and run jobs
+  - SparkContext is wrapped in SparkSession that encapsulates SQLContext, HiveContext, etc.
+
+- **Cluster manager**
+
+  - The cluster manager is a separate process that monitors the available resources, and makes sure that all machines are responsive during the job.
+  - 3 different options of cluster managers
+    - Standalone cluster manager
+    - YARN (from Hadoop)
+    - Mesos (open source from UC Berkeley's AMPLab Coordinators)
+
+- **Workers**
+
+  - Compute nodes in cluster that are responsible for running the Spark application code
+  - When SparkContext is created, each worker starts executors
+    - **Executors**: distributed agents that execute tasks - the basic units of execution
+
+### 2.2. Functional programming
 
 - **Functional programming** is the process of building software by composing **pure functions**, avoiding **shared state**, **mutable data**, and **side-effects**.
 
@@ -107,7 +166,7 @@ Spark is written in Scala, which is a functional programming. There are applicat
 
     - **Side-effects:** any application state change that is observable outside the called function other than its return value.
 
-### 2.2. Directed Acyclic Graph (DAG)
+### 2.3. Directed Acyclic Graph (DAG)
 
 Spark features an advanced Directed Acyclic Graph (DAG) engine supporting cyclic data flow. Each Spark job creates a DAG of task stages to be performed on the cluster.
 
@@ -117,7 +176,7 @@ Spark features an advanced Directed Acyclic Graph (DAG) engine supporting cyclic
 
 - Compared to MapReduce, which creates a DAG with two predefined stages - Map and Reduce, DAGs created by Spark can contain any number of stages.
 
-### 2.3. Maps and lambda functions
+### 2.4. Maps and lambda functions
 
 In Spark, maps take data as input and then transform that data with whatever function you put in the map. They are like directions for the data telling how each input should get to the output.
 
@@ -178,18 +237,41 @@ In Spark, maps take data as input and then transform that data with whatever fun
 
     Spark is not changing the original data set: Spark is merely making a copy.
 
-### 2.4. Imperative vs declarative programming
+### 2.5. Imperative vs declarative programming
 
 - How to achieve the result vs. what result to get
 
     <img src="resources/spark_imp_dec.png" width=500>
 
-### 2.5. Resilient distributed dataset (RDD)
+### 2.6. Resilient distributed dataset (RDD)
 
-- **RDD** is a fundamental data structure of Spark. It is an immutable distributed collection of objects. RDDs are a low-level abstraction of the data. You can think of RDDs as long lists distributed across various machines. You can still use RDDs as part of your Spark code although data frames and SQL are easier.
+- **RDD** is a fundamental data structure of Spark. It is an **immutable distributed collection of objects** (rows, records). RDDs are a low-level abstraction of the data. You can think of RDDs as long lists distributed across various machines. You can still use RDDs as part of your Spark code although data frames and SQL are easier.
 
     <img src="resources/spark_rdd.png" width=300> <br>
     <img src="resources/spark_rdd2.png" width=225>
+
+- Characteristic of RDDs
+
+  - **Partitioned**: Split across data nodes in a cluster
+
+    - Processing occurs on nodes in parallel
+    - Data is stored in memory for each node in the cluster
+
+  - **Immutable**: RDDs, once created, cannot be changed. RDDs support only 2 types of operations:
+
+    - **Transformation**: transformation into another RDD. Transformations are executed only when a result is requested
+    - **Action**: Request a result
+
+        Lazy evaluation: Spark keeps a record of the series of transformations rquested by the user. It groups the transformations in an efficient way when an Action is requested.
+
+  - **Resilient**: Can be reconstructed even if a node crashes.
+
+    - RDDs can be created in 2 ways:
+
+        Reading a file <br>
+        Transforming another RDD
+
+    - Spark tracks the source and every transformation that led to the current RDD, aka., the **lineage** of RDD. The lineage allows RDDs to be (1) reconstructed when nodes crash, and (2) lazily instantiated (materialized) when accessing the results.
 
 - Additional resources
 
@@ -197,388 +279,27 @@ In Spark, maps take data as input and then transform that data with whatever fun
 
   - Link to the Spark documentation's [RDD programming guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html).
 
-## 3. Data wrangling with Spark
+### 2.7. RDDs, Datasets, and DataFrames
 
-### 3.1. Spark session
+- DataFrame
 
-The first component of a Spark program is a `SparkContext`, or equivalently `SparkSession` in `pyspark.sql`
+    <img src="resources/spark_df.png" width=700>
 
-- Instantiate Spark session
+  - Built on top of RDDs
+  - Each row represents 1 observation
 
-    ```python
-    import pyspark
-    from pyspark import SparkConf
-    from pyspark.sql import SparkSession
+- Comparison
 
-    # Set or update SparkSession parameters
-    spark = SparkSession \
-    .builder \
-    .appName("Our first Python Spark SQL example") \
-    .getOrCreate()
+    | RDDs | Datasets | DataFrames |
+    | --- | --- | --- |
+    | Primary abstraction since initial version | Added to Spark in 1.6 | Added to Spark in 1.3 |
+    | Immutable and distributed | Immutable and distributed | Immutable and distributed |
+    | Strong typing, use of lambda | Supports strong typing, lambda |  |
+    | No optimized execution | Leverage optimizers in recent versions |  |
+    | Available in all languages | Present in Scala and Java, not Python or R | Available in all languages |
+    |  | No named columns | Named columns, like Pandas or R |
+    |  | Extension of DataFrames: type-safe, OOP interface | Conceptually equal to a table in a relational database management system (RDBMS) |
+    |  | Compile-time type safety | No type safety at compile time |
+    |  | Datasets of the `Row()` object in Scala/Java often called DataFrames | Equivalent to `Dataset<Row>` in Java or `Dataset[Row]` in Scala |
 
-    # Check if the change went through
-    spark.sparkContext.getConf().getAll()
-    ```
-
-### 3.2. Read and write data into Spark dataframe
-
-- Read json
-
-    ```python
-    path = "data/sparkify_log_small.json" # or the data file path of remote cluster
-    df = spark.read.json(path)
-    ```
-
-- Read csv
-
-    ```python
-    # From local
-    path = "data/sparkify_log_small.csv"
-    df = spark.read.csv(path, header=True)
-    ```
-
-    ```python
-    # From remote
-    from pyspark import SparkFiles
-    url = "https://s3.amazonaws.com/zepl-trilogy-test/food.csv"
-    spark.sparkContext.addFile(url)
-    df = spark.read.csv(SparkFiles.get("food.csv"), sep=",", header=True)
-    df.show()
-    ```
-
-- Read data with date format
-
-    ```python
-    from pyspark import SparkFiles
-    url ="https://s3.us-east-2.amazonaws.com/trilogy-dataviz/rainfall.csv"
-    spark.sparkContext.addFile(url)
-    df = spark.read.csv(SparkFiles.get("rainfall.csv"), sep=",", header=True, inferSchema=True, timestampFormat="yyyy/MM/dd HH:mm:ss")
-    df.show()
-    ```
-
-- Read data with defined schema
-
-    ```python
-    # Import struct fields that we can use
-    from pyspark.sql.types import StructField, StringType, IntegerType, StructType
-
-    # Next we need to create the list of struct fields
-    schema = [StructField("food", StringType(), True), StructField("price", IntegerType(), True),]
-
-    # Pass in our fields
-    final = StructType(fields=schema)
-
-    # Read our data with our new schema
-    dataframe = spark.read.csv(SparkFiles.get("food.csv"), sep=",", header=True, schema=final)
-    ```
-
-- Write csv
-
-    ```python
-    out_path = "data/sparkify_log_small.csv"
-
-    # Write as csv
-    df.write.save(out_path, format="csv", header=True)
-    ```
-
-### 3.3. Overview of the loaded data
-
-- Print table schema
-
-    ```python
-    df.printSchema()
-    ```
-
-- Describe data types
-
-    ```python
-    df.describe()
-    ```
-
-- Show the columns
-
-    ```python
-    df.columns
-    ```
-
-- Show the first few rows
-
-    ```python
-    # Show as a table
-    df.show(n=1)
-    ```
-
-    ```python
-    # Show as a list of rows
-    df.take(5)
-    ```
-
-    ```python
-    df.head()
-    ```
-
-- Describe summary statistics
-
-    ```python
-    # All columns
-    df.describe().show()
-    ```
-
-    ```python
-    # An individual column
-    df.describe("artist").show()
-    ```
-
-- Check the number of rows
-
-    ```python
-    df.count()
-    ```
-
-### 3.4. General functions
-
-- [Declarative]: create a view to run SQL queries
-
-    ```python
-    df.createOrReplaceTempView("df_table")
-    ```
-
-- Select column(s)
-
-    ```python
-    # Select 1 column
-    df['price'] # is of type pyspark.sql.column.Column
-    df.select('price') # is of type pyspark.sql.dataframe.DataFrame
-    df.select('price').show() # show selected data
-    ```
-
-    ```python
-    # Select multiple columns
-    df.select(["age", "height_meter", "weight_kg"]).show()
-    ```
-
-    ```python
-    # Collect a column as a list
-    df.select("price").collect()
-    ```
-
-    ```python
-    # Select with "where" condition
-    df.select(['userId', 'firstName']).where(df.userID == "1046").collect()
-    ```
-
-- [Declarative]: select clause with SQL syntax
-
-    ```python
-    spark.sql(
-        '''
-        SELECT *
-        FROM df_table
-        WHERE userID == '1046'
-        LIMIT 2
-        '''
-    ).show() # or .collect()
-    ```
-
-- Filter rows with given condition
-
-    ```python
-    # Filter using SQL syntax
-    df.filter("price<20").show()
-    ```
-
-    ```python
-    # Filter using Python syntax
-    df.filter(df["price"] < 200).show()
-    df.filter( (df["price"] < 200) | (df['points'] > 80) ).show()
-    df.filter(df["country"] == "US").show()
-    df.filter(df['userId'] != "")
-    ```
-
-- Drop NaN
-
-    ```python
-    df_valid = df.dropna(how='any', subset=['userId', 'sessionId'])
-    df_valid.count()
-    ```
-
-- Drop duplicates
-
-    ```python
-    df.select("page").dropDuplicates().sort("page").show()
-    ```
-
-- Add new column
-
-    ```python
-    # Add a new column
-    df.withColumn('newprice', df['price']).show()
-    ```
-
-    ```python
-    # Add a new column with calculation
-    df.withColumn('doubleprice',df['price']*2).show()
-    ```
-
-- Update column name
-
-    ```python
-    df.withColumnRenamed('price','newerprice').show()
-    ```
-
-- Group by
-
-    ```python
-    # Find the average precipitation per year
-    averages = df.groupBy("year").avg()
-    averages.orderBy("year").select("year", "avg(prcp)").show()
-    ```
-
-- Order by
-
-    ```python
-    # Order a dataframe by ascending values
-    df.orderBy(df["points"].asc()).head(5)
-    ```
-
-    equivalently
-
-    ```python
-    # Order a dataframe by ascending values
-    from pyspark.sql.functions import asc
-    df.orderBy(asc("points")).head(5)
-    ```
-
-    equivalently
-
-    ```python
-    # Order a dataframe by ascending values
-    df.sort("points").head(5)
-    ```
-
-- Filter, group by, order by
-
-    ```python
-    songs_in_hour = df.filter(df.page == "NextSong").groupby(df.hour).count().orderBy(df.hour.cast("float"))
-    songs_in_hour.show()
-    ```
-
-### 3.5. Aggregate functions
-
-Spark SQL provides built-in methods for the most common aggregations such as `count()`, `countDistinct()`, `avg()`, `max()`, `min()`, etc. in the pyspark.sql.functions module. These methods are not the same as the built-in methods in the Python Standard Library
-
-- Take average
-
-    ```python
-    # Use avg
-    from pyspark.sql.functions import avg
-    df.select(avg("points")).show()
-    ```
-
-    equivalently
-
-    ```python
-    # Use agg
-    df.agg({"points": "avg"}).show()
-    ```
-
-### 3.6. User defined functions (UDF)
-
-The default type of the returned variable for UDFs is string. If we would like to return an other type we need to explicitly do so by using the different types from the pyspark.sql.types module.
-
-- Output string
-
-    ```python
-    # Add a new column based on user-defined function
-    from pyspark.sql.functions import udf
-    import datetime
-
-    get_hour = udf(lambda x: datetime.datetime.fromtimestamp(x / 1000.0). hour)
-    df = df.withColumn("hour", get_hour(df.ts))
-    ```
-
-- Output integer
-
-    ```python
-    # Add a new column based on user-defined function
-    from pyspark.sql.functions import udf
-    from pyspark.sql.types import StringType
-    from pyspark.sql.types import IntegerType
-
-    flag_downgrade_event = udf(lambda x: 1 if x == "Submit Downgrade" else 0, IntegerType())
-    df = df.withColumn("downgraded", flag_downgrade_event("page"))
-    ```
-
-- [Declarative]: UDF with SQL syntax
-
-    ```python
-    # User-defined function
-    spark.udf.register("get_hour", lambda x: int(datetime.datetime.fromtimestamp(x / 1000.0).hour))
-
-    # SQL query using the user-defined function
-    songs_in_hour = spark.sql(
-        '''
-        SELECT get_hour(ts) AS hour, COUNT(*) as plays_per_hour
-        FROM df_table
-        WHERE page = "NextSong"
-        GROUP BY hour
-        ORDER BY cast(hour as int) ASC
-        '''
-    )
-    ```
-
-### 3.7. Window functions
-
-Window functions are a way of combining the values of ranges of rows in a dataframe. When defining the window we can choose how to sort and group (with the partitionBy method) the rows and how wide of a window we'd like to use (described by rangeBetween or rowsBetween).
-
-For further information see the [Spark SQL, DataFrames and Datasets Guide](https://spark.apache.org/docs/latest/sql-programming-guide.html) and the [Spark Python API Docs](https://spark.apache.org/docs/latest/api/python/index.html).
-
-- Cumulative sum
-
-    ```python
-    from pyspark.sql import Window
-    from pyspark.sql.functions import desc
-    from pyspark.sql.functions import sum as Fsum
-
-    # Create window function
-    windowval = Window.partitionBy("userId").orderBy(desc("ts")).rangeBetween(Window.unboundedPreceding, 0)
-
-    # Add a column of cumulative sum
-    df = df.withColumn("phase", Fsum("downgraded").over(windowval))
-    ```
-
-- [Declarative]: cumulative sum with SQL syntax
-
-    ```python
-    spark.sql(
-        '''
-        SELECT userId, ts, home_flag
-        SUM(home_flag) OVER(PARTITION BY userId ORDER BY ts DESC RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) phase
-        FROM df_table
-        '''
-    )
-    ```
-
-### 3.8. Convert PySpark dataframe to pandas dataframe
-
-- Convert to pandas dataframe
-
-    ```python
-    pandas_df = df.toPandas()
-    pandas_df.head()
-    ```
-
-### 3.9. Date
-
-- Show the year and month for the date column
-
-    ```python
-    # Import date time functions
-    from pyspark.sql.functions import year, month
-
-    # Show the year for the date column
-    df.select(year(df["date"])).show()
-
-    # Show the month
-    df.select(month(df['Date'])).show()
-    ```
+    Starting from Spark 2.0, APIs for Datasets and DataFrames have merged
