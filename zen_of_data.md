@@ -7,10 +7,10 @@
 
 ### The analytics paradigm
 
-1. Decompose the ask
+1. Decompose the task
 2. Identify data sources
 3. Define strategy and metrics
-4. Build data retrieval plan 
+4. Build data retrieval plan
 5. Retrieve the data
 6. Assemble and clean the data
 7. Analyze for trends
