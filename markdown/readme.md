@@ -63,11 +63,14 @@ ___
 ```
 
 <!-- tables -->
-| Name | Email|
+|Name|Email|
 |---|---|
 |Jia Don| jiadon@gmail.com|
 |J D| jd@gmail.com|
 
+|Country Name|Country Code|Year|Rural_Value|Electricity_Value|
+|---|---|---|---|---|
+|Aruba|ABW|1960|49.224|49.239|
 
 <!-- Task lists -->
 * [x] Task 1

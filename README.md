@@ -13,6 +13,9 @@
 - [Natural Language Processing (NLP)](nlp)
 - [Big Data](big_data)
 
+
 ## Acknowledgement
 
 Notes were taken from Northwestern University Data Science Bootcamp, Udacity, Coursera, Udemy, Pluralsight, and workshops at Northwestern University.
+
+### [Extra: Chris Albon Notes](https://chrisalbon.com/)
